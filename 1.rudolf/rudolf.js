@@ -74,9 +74,19 @@ const assets = {
         {name: 'success', url: urlPrefix + "/success.mp3"}
     ]
 };
+const testConfigs = [
+    ['G', 'G', 'B', 'G'],
+    ['B', 'G', 'G', 'B'],
+    ['G', 'B', 'B', 'G'],
+    ['B', 'B', 'B', 'B'],
+    ['B', 'G', 'G', 'G'],
+    ['G', 'G', 'G', 'G']
+];
+
 let gameState = 'loading';
 let sBg;
 let sSlots = [];
+let sItems = [];
 
 clear();
 textSize(30);
@@ -97,7 +107,6 @@ function start() {
     sBg = sprite(cgtAssets.getImg('background'), 400, 300, 0.5);
     sBg.depth = -100;
     createSlots();
-
     gameState = 'running';
 }
 
@@ -106,6 +115,15 @@ function createSlots() {
         let sSlot = sprite(cgtAssets.getImg('slot'), (1/8+i/4)*800, 500, 0.5);
         sSlots.push(sSlot);
     }
+}
+
+function removeItems() {
+    for ( let sItem of sItems )
+        sItem.remove();
+    sItems = [];
+}
+
+function displayConfig(config) {
 }
 
 function loop() {
