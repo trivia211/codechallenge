@@ -1,6 +1,8 @@
 
 // * CGTools *
 
+const repoPrefix = "https://raw.githubusercontent.com/trivia211/codechallenge_asset/main";
+
 let cgtAssets = {};
 (_this => {
     // assets must be in format {images: [{name:, url:}, ...], sounds: [{name:, url:}, ...]}
@@ -51,36 +53,39 @@ let cgtAssets = {};
 })(cgtAssets);
 
 // * 1. Rudolf *
+let callbacks = (function() {
 
-const rUrlPrefix = "https://raw.githubusercontent.com/trivia211/codechallenge_asset/main/1.rudolf";
+const urlPrefix = repoPrefix + "/1.rudolf/assets";
 
-const rAssets = {
+const assets = {
     images: [
-        {name: 'background', url: rUrlPrefix + "/background.jpg"},
-        {name: 'bomb', url: rUrlPrefix + "/bomb.png"},
-        {name: 'boom', url: rUrlPrefix + "/boom.png"},
-        {name: 'gift', url: rUrlPrefix + "/gift.png"},
-        {name: 'screwdriver', url: rUrlPrefix + "/screwdriver.png"},
-        {name: 'slot', url: rUrlPrefix + "/slot.png"},
-        {name: 'take', url: rUrlPrefix + "/take.png"},
-        {name: 'wand', url: rUrlPrefix + "/wand.png"}
+        {name: 'background', url: urlPrefix + "/background.jpg"},
+        {name: 'bomb', url: urlPrefix + "/bomb.png"},
+        {name: 'boom', url: urlPrefix + "/boom.png"},
+        {name: 'gift', url: urlPrefix + "/gift.png"},
+        {name: 'screwdriver', url: urlPrefix + "/screwdriver.png"},
+        {name: 'slot', url: urlPrefix + "/slot.png"},
+        {name: 'take', url: urlPrefix + "/take.png"},
+        {name: 'wand', url: urlPrefix + "/wand.png"}
     ],
     sounds: [
-        {name: 'action', url: rUrlPrefix + "/action.mp3"},
-        {name: 'boom', url: rUrlPrefix + "/boom.mp3"},
-        {name: 'success', url: rUrlPrefix + "/success.mp3"}
+        {name: 'action', url: urlPrefix + "/action.mp3"},
+        {name: 'boom', url: urlPrefix + "/boom.mp3"},
+        {name: 'success', url: urlPrefix + "/success.mp3"}
     ]
 };
-let rGameState = 'loading';
-let rBgS;
+let gameState = 'loading';
+let sBg;
+let sSlots = [];
 
+clear();
 textSize(30);
 textAlign(CENTER, CENTER);
 text("Betöltés...", 400, 300);
 
-cgtAssets.load(rAssets).then(() => {
+cgtAssets.load(assets).then(() => {
     clear();
-    rStart();
+    start();
 }).catch(err => {
     clear();
     fill('red');
@@ -88,13 +93,33 @@ cgtAssets.load(rAssets).then(() => {
     text("Hiba történt a betöltés során: " + err, 0, 300, 800);
 });
 
-function rStart() {
-    rBgS = sprite(cgtAssets.getImg('background'), 400, 300, 0.5);
-    rGameState = 'running';
+function start() {
+    sBg = sprite(cgtAssets.getImg('background'), 400, 300, 0.5);
+    sBg.depth = -100;
+    createSlots();
+
+    gameState = 'running';
+}
+
+function createSlots() {
+    for ( let i = 0; i < 4; ++i ) {
+        let sSlot = sprite(cgtAssets.getImg('slot'), (1/8+i/4)*800, 500, 0.5);
+        sSlots.push(sSlot);
+    }
 }
 
 function loop() {
-    if ( rGameState !== 'running' )
-        return;
+    fill('white');
+    for ( let i = 0; i < 4; ++i ) {
+        text(i+1, (1/8+i/4)*800, 570);
+    }
+}
 
+return { loop };
+
+})();
+
+
+function loop() {
+    callbacks.loop();
 }
