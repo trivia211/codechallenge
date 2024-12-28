@@ -4,13 +4,9 @@ function rs() {
 // * * * Megoldás * * *
 
 function solution() {
-    for ( let i = 0; i < 4; ++i ) {
-        if ( slot(i) === 'G' ) {
-            take(i);
-        } else if ( slot(i) === 'B' ) {
-            conjure(i);
-            take(i);
-        }
+    for ( let i = 0; i < 4; i = i + 1 ) {
+        take(i);
+        conjure(i);
     }
 }
 
@@ -70,8 +66,6 @@ let cgt = {};
 
     // dir: {x: , y:}
     _this.floatSprite = function(sprite, dir, durationMs) {
-        if ( findFloatedSprite(sprite) !== null )
-            return;
         dir = Object.assign({}, dir);
         if ( dir.x === undefined )
             dir.x = 0;
@@ -86,22 +80,55 @@ let cgt = {};
             sprite.x = fs.x + dir.x * offsetRatio;
             sprite.y = fs.y + dir.y * offsetRatio;
         };
-        floatSprites.push(fs);
     }
 
-    _this.sleep = function(ms) {
+    _this.setGameSpeed = function(val) {
+        gameSpeed = val;
+        if ( val === 0.0 ) {
+            if ( gameRestart === null ) {
+                gameRestart = {};
+                gameRestart.promise = new Promise(resolve => {gameRestart.resolve = resolve});
+            }
+        } else if ( gameRestart !== null ) {
+            let resolve = gameRestart.resolve;
+            gameRestart = null;
+            resolve();
+        }
+    }
+
+    _this.getGameSpeed = function() {
+        return gameSpeed;
+    }
+
+    _this.getDuration = function(gameMs) {
+        if ( gameSpeed === 0.0 )
+            return null;
+        else
+            return gameMs / gameSpeed;
+    }
+
+    _this.sleep = async function(gameMs) {
+        await _this.gameResumed();
+        let ms = _this.getDuration(gameMs);
+        await _this.absoluteSleep(ms);
+        await _this.gameResumed();
+    }
+
+    _this.absoluteSleep = function(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    let imgs = {}, sounds = {};
-    let floatSprites = [];
-
-    function findFloatedSprite(sprite) {
-        for ( const fs of floatSprites )
-            if ( fs.sprite === sprite )
-                return fs;
-        return null;
+    _this.gameResumed = async function() {
+        while ( gameRestart !== null )
+            await gameRestart.promise;
     }
+
+
+
+    let imgs = {}, sounds = {};
+    let gameSpeed = 1.0;
+
+    let gameRestart = null;
 })(cgt);
 
 // * 1. Rudolf *
@@ -125,7 +152,11 @@ const assets = {
         {name: 'screwdriver', url: urlPrefix + "/screwdriver.png"},
         {name: 'slot', url: urlPrefix + "/slot.png"},
         {name: 'take', url: urlPrefix + "/take.png"},
-        {name: 'wand', url: urlPrefix + "/wand.png"}
+        {name: 'wand', url: urlPrefix + "/wand.png"},
+        {name: 'speedPaused', url: repoPrefix + "/assets/speed_paused.png"},
+        {name: 'speedNormal', url: repoPrefix + "/assets/speed_normal.png"},
+        {name: 'speedFast', url: repoPrefix + "/assets/speed_fast.png"},
+        {name: 'speedFaster', url: repoPrefix + "/assets/speed_faster.png"}
     ],
     sounds: [
         {name: 'action', url: urlPrefix + "/action.mp3"},
@@ -146,15 +177,36 @@ const testConfigs = [
 let sBg;
 let sSlots = [];
 let sItems = [];
+let sSpeedBtns = [];
 let state = {config: null, points: 0, blownUpSlotNo: null};
 let history = [];
-let gameSpeed = 1.0;
 
 function init() {
     clear();
     sBg = sprite(cgt.getImg('background'), 400, 300, 0.5);
     sBg.depth = -100;
+    createSpeedButtons();
     createSlots();
+    cgt.setGameSpeed(0.0);
+}
+
+function createSpeedButtons() {
+    let offset = 300;
+    let sPaused = sprite(cgt.getImg("speedPaused"), 22 + offset, 22, 0.5),
+       sNormal = sprite(cgt.getImg("speedNormal"), 62 + offset, 22, 0.5),
+       sFast = sprite(cgt.getImg("speedFast"), 102 + offset, 22, 0.5),
+       sFaster = sprite(cgt.getImg("speedFaster"), 142 + offset, 22, 0.5);
+    sPaused.onMousePressed = function() { cgt.setGameSpeed(0); };
+    sNormal.onMousePressed = function() { cgt.setGameSpeed(1); };
+    sFast.onMousePressed = function() { cgt.setGameSpeed(3); };
+    sFaster.onMousePressed = function() { cgt.setGameSpeed(20); };
+    sSpeedBtns = [sPaused, sNormal, sFast, sFaster];
+}
+
+function removeSpeedBtns() {
+    for ( const btn of sSpeedBtns )
+        btn.remove();
+    sSpeedBtns = [];
 }
 
 function createSlots() {
@@ -166,7 +218,6 @@ function createSlots() {
 }
 
 function updateSlotIds() {
-    fill('white');
     for ( let i = 0; i < 4; ++i )
         text(i, (1/8+i/4)*800, 575);
 }
@@ -216,6 +267,8 @@ function updateState(historyElement) {
         else if ( state.config[historyElement.no] === 'B' ) {
             state.blownUpSlotNo = historyElement.no;
             --state.points;
+        } else {
+            state.points -= 0.5;
         }
         state.config[historyElement.no] = '';
     } else if ( historyElement.action === 'defuse' ) {
@@ -231,6 +284,8 @@ function updateState(historyElement) {
             state.config[historyElement.no] = 'B';
         else if ( state.config[historyElement.no] === 'B' )
             state.config[historyElement.no] = 'G';
+        else
+            state.points -= 0.5;
     } else if ( ['toomanyactions', 'invalidno'].includes(historyElement.action) )
         --state.points;
 }
@@ -243,19 +298,23 @@ async function playHistoryElementBeforeUpdate(he) {
         let iconNames = {take: 'take', defuse: 'screwdriver', conjure: 'wand'};
         let iconName = iconNames[he.action];
         let sAction = displayActionIcon(iconName, he.no);
-        await cgt.sleep(1200 / gameSpeed);
+        await cgt.sleep(1200);
         let slotContent = state.config[he.no];
         if ( he.action === 'take' ) {
             if ( slotContent === 'G' )
                 cgt.getSnd('acquire').play();
+            else if ( slotContent === '' )
+                cgt.getSnd('boom').play();
         } else if ( he.action === 'defuse' ) {
             if ( slotContent === 'B' )
                 cgt.getSnd('acquire').play();
         } else {
-            sAction.velocity = {x: 0, y: 3};
-            await cgt.sleep(600 / gameSpeed);
+            sAction.velocity = {x: 0, y: 3 * cgt.getGameSpeed()};
+            await cgt.sleep(600);
             if ( slotContent !== '' )
                 cgt.getSnd('action').play();
+            else
+                cgt.getSnd('boom').play();
         }
         sAction.remove();
     }
@@ -267,23 +326,23 @@ async function playHistoryElementAfterUpdate(he, beforeResult) {
         return;
     if ( state.blownUpSlotNo !== null ) {
         cgt.getSnd('boom').play();
-        let sBoom = sprite(cgt.getImg('boom'), 400, 300, 0.6);
+        let sBoom = sprite(cgt.getImg('boom'), 400, 300, 0.5);
         sBoom.depth = -5;
-        await cgt.sleep(2000 / gameSpeed);
+        await cgt.sleep(2000);
         sBoom.remove();
     } else if ( he.action === 'toomanyactions' ) {
         cgt.getSnd('boom').play();
         textSize(50);
         text("Túl sok műveletet próbálasz végrehajtani!", 0, 300, 800);
         textSize(30);
-        await cgt.sleep(5000);
+        await cgt.absoluteSleep(5000);
         updateCanvas();
     } else if ( he.action === 'invalidno' ) {
         cgt.getSnd('boom').play();
         textSize(50);
         text("Érvénytelen slot sorszám a '" + he.function + "' akció során: " + he.no, 0, 300, 800);
         textSize(30);
-        await cgt.sleep(5000);
+        await cgt.absoluteSleep(5000);
         updateCanvas();
     }
 }
@@ -346,6 +405,9 @@ window.conjure = function(no) {
 async function runTests() {
     for ( let i = 0; i < testConfigs.length; ++i )
         await runTest(testConfigs[i], i+1);
+    textSize(50); text("Vége! Elért pontszám: " + state.points, 0, 300, 800); textSize(30);
+    removeSpeedBtns();
+    cgt.getSnd('success').play();
 }
 
 async function runTest(config, level) {
@@ -364,19 +426,27 @@ async function runTest(config, level) {
     state.points = points;
     displayState();
     textSize(50); text(level + ". pálya", 0, 300, 800); textSize(30);
+    await cgt.sleep(1000);
+    updateCanvas();
+    let first = true;
     for ( const action of solHistory ) {
-        await cgt.sleep(1000 / gameSpeed);
-        updateCanvas();
+        if ( !first ) {
+            await cgt.sleep(1000);
+            updateCanvas();
+        } else
+            first = false;
         let beforeResult = await playHistoryElementBeforeUpdate(action);
         updateState(action);
         displayState();
         await playHistoryElementAfterUpdate(action, beforeResult);
     }
     textSize(50); text("Rudolf végzett ezen a pályán.", 0, 300, 800); textSize(30);
-    await cgt.sleep(2000 / gameSpeed);
+    await cgt.sleep(2000);
+    updateCanvas();
 }
 
 clear();
+fill('white');
 textSize(30);
 textAlign(CENTER, CENTER);
 text("Betöltés...", 400, 300);
@@ -387,11 +457,13 @@ try {
     clear();
     fill('red');
     textSize(14);
-    text("Hiba történt a betöltés során: " + err, 0, 300, 800);
+    text("Hiba történt a betöltés során: " + e, 0, 300, 800);
     return;
 }
 
 init();
+textSize(50); text("Kattints a startra!", 0, 300, 800); textSize(30);
+await cgt.gameResumed();
 await runTests();
 
 })();
