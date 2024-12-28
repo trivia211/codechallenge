@@ -5,10 +5,11 @@ function rs() {
 
 function solution() {
     for ( let i = 0; i < 4; ++i ) {
-        if ( slot(i) === 'G' )
+        if ( slot(i) === 'G' ) {
             take(i);
-        else if ( slot(i) === 'B' ) {
-            defuse(i);
+        } else if ( slot(i) === 'B' ) {
+            conjure(i);
+            take(i);
         }
     }
 }
@@ -17,7 +18,7 @@ function solution() {
 
 solution(); }
 
-// * CGTools *
+// * CodeGuppyTools *
 
 const repoPrefix = "https://raw.githubusercontent.com/trivia211/codechallenge_asset/main";
 
@@ -88,6 +89,10 @@ let cgt = {};
         floatSprites.push(fs);
     }
 
+    _this.sleep = function(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     let imgs = {}, sounds = {};
     let floatSprites = [];
 
@@ -124,6 +129,7 @@ const assets = {
     ],
     sounds: [
         {name: 'action', url: urlPrefix + "/action.mp3"},
+        {name: 'acquire', url: urlPrefix + "/acquire.mp3"},
         {name: 'boom', url: urlPrefix + "/boom.mp3"},
         {name: 'success', url: urlPrefix + "/success.mp3"}
     ]
@@ -140,8 +146,9 @@ const testConfigs = [
 let sBg;
 let sSlots = [];
 let sItems = [];
-let state = {config: null, points: 0, blownUpBombNo: null};
+let state = {config: null, points: 0, blownUpSlotNo: null};
 let history = [];
+let gameSpeed = 1.0;
 
 function init() {
     clear();
@@ -151,12 +158,17 @@ function init() {
 }
 
 function createSlots() {
-    fill('white');
     for ( let i = 0; i < 4; ++i ) {
         let sSlot = sprite(cgt.getImg('slot'), (1/8+i/4)*800, 525, 0.5);
+        sSlot.depth = -10;
         sSlots.push(sSlot);
-        text(i, (1/8+i/4)*800, 575);
     }
+}
+
+function updateSlotIds() {
+    fill('white');
+    for ( let i = 0; i < 4; ++i )
+        text(i, (1/8+i/4)*800, 575);
 }
 
 function removeItems() {
@@ -168,9 +180,8 @@ function removeItems() {
 function setConfig(config) {
     state.config = [...config];
     state.points = 0;
-    state.blownUpBombNo = null;
+    state.blownUpSlotNo = null;
     history = [];
-    displayState();
 }
 
 function displayState() {
@@ -180,51 +191,142 @@ function displayState() {
             continue;
         const name = state.config[i] === 'G' ? 'gift' : 'bomb';
         let sItem = sprite(cgt.getImg(name), (1/8+i/4)*800, 445, 0.25);
+        sItem.depth = -10;
         cgt.floatSprite(sItem, {y: 9}, 900);
         sItems.push(sItem);
     }
+    updateCanvas();
+}
+
+function updateCanvas() {
+    clear();
+    updateSlotIds();
+    textAlign(RIGHT, TOP);
+    text("Pontok: " + state.points, 790, 10);
+    textAlign(CENTER, CENTER);
+
 }
 
 function updateState(historyElement) {
-    if ( state.blownUpBombNo !== null )
+    if ( state.blownUpSlotNo !== null )
         return;
     if ( historyElement.action === 'take' ) {
-        if ( state.config[historyElement.no] === 'G' ) {
-            state.config[historyElement.no] = '';
+        if ( state.config[historyElement.no] === 'G' )
             state.points += 2;
-        } else if ( state.config[historyElement.no] === 'B' )
-            state.blownUpBombNo = historyElement.no;
+        else if ( state.config[historyElement.no] === 'B' ) {
+            state.blownUpSlotNo = historyElement.no;
+            --state.points;
+        }
+        state.config[historyElement.no] = '';
     } else if ( historyElement.action === 'defuse' ) {
-        if ( state.config[historyElement.no] === 'B' ) {
-            state.config[historyElement.no] = '';
-            state.points += 1;
-        } else
-            state.blownUpBombNo = historyElement.no;
+        if ( state.config[historyElement.no] === 'B' )
+            ++state.points;
+        else {
+            state.blownUpSlotNo = historyElement.no;
+            --state.points;
+        }
+        state.config[historyElement.no] = '';
     } else if ( historyElement.action === 'conjure' ) {
         if ( state.config[historyElement.no] === 'G' )
             state.config[historyElement.no] = 'B';
         else if ( state.config[historyElement.no] === 'B' )
             state.config[historyElement.no] = 'G';
+    } else if ( ['toomanyactions', 'invalidno'].includes(historyElement.action) )
+        --state.points;
+}
+
+async function playHistoryElementBeforeUpdate(he) {
+    if ( state.blownUpSlotNo !== null )
+        return;
+    if (  ['take', 'defuse', 'conjure'].includes(he.action) ) {
+        cgt.getSnd('action').play();
+        let iconNames = {take: 'take', defuse: 'screwdriver', conjure: 'wand'};
+        let iconName = iconNames[he.action];
+        let sAction = displayActionIcon(iconName, he.no);
+        await cgt.sleep(1200 / gameSpeed);
+        let slotContent = state.config[he.no];
+        if ( he.action === 'take' ) {
+            if ( slotContent === 'G' )
+                cgt.getSnd('acquire').play();
+        } else if ( he.action === 'defuse' ) {
+            if ( slotContent === 'B' )
+                cgt.getSnd('acquire').play();
+        } else {
+            sAction.velocity = {x: 0, y: 3};
+            await cgt.sleep(600 / gameSpeed);
+            if ( slotContent !== '' )
+                cgt.getSnd('action').play();
+        }
+        sAction.remove();
+    }
+    return true;
+}
+
+async function playHistoryElementAfterUpdate(he, beforeResult) {
+    if ( beforeResult !== true )
+        return;
+    if ( state.blownUpSlotNo !== null ) {
+        cgt.getSnd('boom').play();
+        let sBoom = sprite(cgt.getImg('boom'), 400, 300, 0.6);
+        sBoom.depth = -5;
+        await cgt.sleep(2000 / gameSpeed);
+        sBoom.remove();
+    } else if ( he.action === 'toomanyactions' ) {
+        cgt.getSnd('boom').play();
+        textSize(50);
+        text("Túl sok műveletet próbálasz végrehajtani!", 0, 300, 800);
+        textSize(30);
+        await cgt.sleep(5000);
+        updateCanvas();
+    } else if ( he.action === 'invalidno' ) {
+        cgt.getSnd('boom').play();
+        textSize(50);
+        text("Érvénytelen slot sorszám a '" + he.function + "' akció során: " + he.no, 0, 300, 800);
+        textSize(30);
+        await cgt.sleep(5000);
+        updateCanvas();
+    }
+}
+
+function displayActionIcon(imgName, no) {
+    let result = sprite(cgt.getImg(imgName), (1/8+no/4)*800, 340, 0.25);
+    result.depth = -10;
+    return result;
+}
+
+function assertNotTooManyActions() {
+    ++actionCnt;
+    if ( actionCnt > 20 ) {
+        const historyElement = {action: 'toomanyactions'};
+        history.push(historyElement);
+        updateState(historyElement);
+        throw new ExitTestError();
     }
 }
 
 function assertSlotNoValid(no, action) {
     if ( !Number.isInteger(no) || no < 0 || no >= 4 ) {
-        history.push({action: 'invalidno', function: action, no});
+        const historyElement = {action: 'invalidno', function: action, no};
+        history.push(historyElement);
+        updateState(historyElement);
         throw new ExitTestError();
     }
 }
 
 function slotAction(action, no) {
+    assertNotTooManyActions();
     assertSlotNoValid(no, action);
     const historyElement = {action, no};
     history.push(historyElement);
     updateState(historyElement);
-    if ( state.blownUpBombNo !== null )
+    if ( state.blownUpSlotNo !== null )
         throw new ExitTestError();
 }
 
+let actionCnt;
+
 window.slot = function(no) {
+    assertNotTooManyActions();
     assertSlotNoValid(no, 'slot');
     return state.config[no];
 }
@@ -242,19 +344,36 @@ window.conjure = function(no) {
 }
 
 async function runTests() {
-    setConfig(testConfigs[0]);
-    runTest();
-    runTest();
+    for ( let i = 0; i < testConfigs.length; ++i )
+        await runTest(testConfigs[i], i+1);
 }
 
-async function runTest() {
+async function runTest(config, level) {
+    let points = state.points;
+    setConfig(config);
+    state.points = points;
+    actionCnt = 0;
     try {
         rs();
     } catch ( e ) {
         if ( !(e instanceof ExitTestError) )
             throw e;
     }
-    console.log({state, history});
+    const solHistory = history;
+    setConfig(config);
+    state.points = points;
+    displayState();
+    textSize(50); text(level + ". pálya", 0, 300, 800); textSize(30);
+    for ( const action of solHistory ) {
+        await cgt.sleep(1000 / gameSpeed);
+        updateCanvas();
+        let beforeResult = await playHistoryElementBeforeUpdate(action);
+        updateState(action);
+        displayState();
+        await playHistoryElementAfterUpdate(action, beforeResult);
+    }
+    textSize(50); text("Rudolf végzett ezen a pályán.", 0, 300, 800); textSize(30);
+    await cgt.sleep(2000 / gameSpeed);
 }
 
 clear();
