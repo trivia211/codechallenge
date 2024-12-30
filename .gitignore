@@ -1,2 +1,2 @@
-page/dist/node_modules
-page/private/local/config.php
+page/public_html/dist/node_modules
+page/public_html/private/local/config.php

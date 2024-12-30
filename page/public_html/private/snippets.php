@@ -13,7 +13,8 @@ abstract class Snippets {
     }
 
     static function foot() {
-        return '<script src="/dist/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>';
+        return '<script src="/dist/node_modules/jquery/dist/jquery.min.js"></script>' .
+            '<script src="/dist/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>';
     }
 }
 

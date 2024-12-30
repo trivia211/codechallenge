@@ -1,0 +1,17 @@
+- biztonságos apache konfigurációt beállítani neki (lásd: microdocssetup.txt, HELPER/... web-security.txt)
+- extra apache direktívák:
+<Directory /path/to/page/public_html/private>
+    Require all denied
+</Directory>
+<DirectoryMatch "^/path/to/page/public_html/dist/.*/dist">
+    Require all granted
+</DirectoryMatch>
+<Directory /path/to/page/public_html/dist>
+    Require all denied
+</Directory>
+
+- npm telepítése (lásd: HELPER/... web-nodejs szerver.txt)
+cd public_html/dist
+npm install
+
+- private/local/config.sample.php -> config.php másolatot létrehozni, beállítani
