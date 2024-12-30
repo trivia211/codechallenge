@@ -2,8 +2,7 @@
 if ( !defined('ROOT') )
    define('ROOT', __DIR__ . "");
 require_once ROOT . "/private/config.php";
-require_once ROOT . "/private/snippets.php"
-
+require_once ROOT . "/private/snippets.php";
 ?>
 <!doctype html>
 <html lang="hu">
