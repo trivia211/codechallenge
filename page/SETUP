@@ -12,6 +12,6 @@
 
 - npm telepítése (lásd: HELPER/... web-nodejs szerver.txt)
 cd public_html/dist
-npm install
+npm install [--omit=dev] # omit: prod serveren
 
 - private/local/config.sample.php -> config.php másolatot létrehozni, beállítani
