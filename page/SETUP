@@ -17,4 +17,12 @@
 cd public_html/dist/public
 npm install [--omit=dev] # omit: prod serveren
 
+- MySQL telepítése: lásd: microdocssetup.txt
+    - rootként:
+        CREATE USER 'codechallenge'@'localhost' IDENTIFIED BY 'jelszó';
+        GRANT ALL PRIVILEGES ON codechallenge.* TO 'codechallenge'@'localhost';
+    - bejelentkezve a felhasználóval
+        - sql/init.sql futtatása
+        - sql/change.sql futtatása
+
 - local/config.sample.php -> config.php másolatot létrehozni, beállítani

@@ -1,7 +1,4 @@
 <?php
-if ( !defined('ROOT') )
-    define('ROOT', __DIR__ . "/..");
-require_once ROOT . "/private/config.php";
 
 abstract class Snippets {
     static function head() {

@@ -3,22 +3,7 @@ if ( !defined('ROOT') )
     define('ROOT', __DIR__ . "/..");
 require_once ROOT . "/local/config.php";
 require_once ROOT . "/private/error-reporting.php";
-
-set_error_reporting(ERROR_REPORTING);
-
-session_set_cookie_params(['samesite'=>'Strict', 'secure'=>true, 'httponly'=>true]);
-session_start();
-if ( !isset($_SESSION['csrf_token']) ) {
-    $_SESSION['csrf_token'] = rtrim(base64_encode(random_bytes(32)), "=");
-    session_write_close();
-    $cookie_options = ['expires'=>0, 'samesite'=>'Strict', 'secure'=>true, 'httponly'=>true];
-    setcookie('csrf_token', $_SESSION['csrf_token'], $cookie_options);
-} else
-    session_abort();
-if ( isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'GET' &&
-        (!isset($_COOKIE['csrf_token']) || $_COOKIE['csrf_token'] !== $_SESSION['csrf_token']) ) {
-    http_response_code(403);
-    exit("Invalid CSRF token.");
-}
+set_error_reporting(Config::ERROR_REPORTING);
+require_once ROOT . "/private/csrf.php";
 
 ?>
