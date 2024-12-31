@@ -3,7 +3,10 @@
 <Directory /path/to/page/public_html/private>
     Require all denied
 </Directory>
-<DirectoryMatch "^/path/to/page/public_html/dist/.*/dist">
+<Directory /path/to/page/public_html/local>
+    Require all denied
+</Directory>
+<DirectoryMatch "^/path/to/page/public_html/dist/public/.*/dist">
     Require all granted
 </DirectoryMatch>
 <Directory /path/to/page/public_html/dist>
@@ -11,7 +14,7 @@
 </Directory>
 
 - npm telepítése (lásd: HELPER/... web-nodejs szerver.txt)
-cd public_html/dist
+cd public_html/dist/public
 npm install [--omit=dev] # omit: prod serveren
 
-- private/local/config.sample.php -> config.php másolatot létrehozni, beállítani
+- local/config.sample.php -> config.php másolatot létrehozni, beállítani
