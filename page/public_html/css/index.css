@@ -1,0 +1,11 @@
+.navbar {
+    background-color: #b0deff;
+}
+
+.navbar-nav {
+    --bs-scroll-height: 55vh;
+}
+
+#icon {
+    height: 2em;
+}
