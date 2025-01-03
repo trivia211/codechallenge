@@ -56,15 +56,19 @@
             alertHtml += message;
         else
             alertHtml += '<p>' + htmlEncode(message) + '</p>';
-        options.alertDiv
-            .attr('class', 'alert ' + options.alertClass + ' alert-dismissible fade show')
+        let subAlertDiv = $('<div></div>')
+            .attr('class', 'alert ' + options.alertClass + ' alert-dismissible fade show mb-0')
             .attr('role', 'alert')
-            .html(alertHtml);
+            .html(alertHtml)
+            .on('closed.bs.alert', function() {
+                options.alertDiv.addClass('d-none');
+            });
+        options.alertDiv.empty().append(subAlertDiv).removeClass('d-none');
         if ( options.scrollTo === 'top' )
             scrollTo(0, 0);
         else if ( options.scrollTo === 'alert' ) {
             options.alertDiv.css('scroll-margin-top', $(".navbar").outerHeight(true) + 'px');
-            options.alertDiv[0].scrollIntoViewIfNeeded();
+            options.alertDiv[0].scrollIntoViewIfNeeded(false);
         }
     }
 
@@ -89,7 +93,7 @@ if ( !Element.prototype.scrollIntoViewIfNeeded )
         new IntersectionObserver( function( [entry] ) {
             const ratio = entry.intersectionRatio;
             if (ratio < 1)
-                el.scrollIntoView(true);
+                el.scrollIntoView(false);
             this.disconnect();
         } ).observe(this);
     };

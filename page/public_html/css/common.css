@@ -18,3 +18,7 @@
 .btn-close {
     --bs-btn-close-bg: url("/img/close-button.svg");
 }
+
+.form-select {
+    --bs-form-select-bg-img: url("/img/select-dropdown.svg")
+}

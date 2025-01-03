@@ -7,8 +7,8 @@ abstract class Snippets {
             '<meta name="viewport" content="width=device-width, initial-scale=1">' .
             '<title>KódKihívás</title>' .
             '<link rel="icon" href="favicon.ico">' .
-            '<link href="/dist/public/node_modules/bootstrap/dist/css/bootstrap.min.css" ' .
-                'rel="stylesheet">' .
+            '<link rel="stylesheet" ' .
+                'href="/dist/public/node_modules/bootstrap/dist/css/bootstrap.min.css">' .
             '<link href="/css/common.css" rel="stylesheet">';
     }
 
@@ -31,6 +31,35 @@ abstract class Snippets {
                 '</li>' .
             '</ul>' .
             '</div></nav>';
+    }
+
+    // requires /js/challengepage.js to be included
+    static function solutionForm($challengeId, $excerciseNo) {
+        $id = $challengeId . '-' . $excerciseNo;
+        return '<div class="row mb-3">' .
+            '<form class="solution-form">' .
+                '<div class="col-lg-7"><div class="border rounded-3 p-2 bg-primary-subtle">' .
+                    '<input type="hidden" name="challengeId" value="' . $challengeId . '">' .
+                    '<input type="hidden" name="excerciseNo" value="' . $excerciseNo . '">' .
+                    '<legend>Megoldás beküldése: <b>' . $excerciseNo . '.</b> feladathoz</legend>' .
+                    '<div class="mb-3">' .
+                        '<label for="sol-' . $id . '-player" class="form-label">Név</label>' .
+                        '<select id="sol-' . $id . '-player" class="form-select player-select" name="player" required></select>' .
+                    '</div>' .
+                    '<div class="mb-3">' .
+                        '<label for="sol-' . $id . '-password" class="form-label">Jelszó</label>' .
+                        '<input type="password" id="sol-' . $id . '-password" class="form-control" name="password" required>' .
+                    '</div>' .
+                    '<div class="mb-3">' .
+                        '<label for="sol-' . $id . '-code" class="form-label">Másold ide a kódodat (solution függvényt)</label>' .
+                        '<textarea id="sol-' . $id . '-code" class="form-control" rows="3" required></textarea>' .
+                    '</div>' .
+                    '<button type="submit" class="btn btn-primary">Küldés</button>' .
+                '</div></div>' .
+                '<div class="w-100"></div>' .
+                '<div class="solution-alert col-lg-7 mt-2 d-none"></div>' .
+            '</form>' .
+        '</div>';
     }
 
     static function foot() {

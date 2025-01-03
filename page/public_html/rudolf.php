@@ -15,7 +15,7 @@ require_once ROOT . "/private/snippets.php";
     <div class="container">
         <div class="row"><div class="col">
             <h1>1. Rudolf</h1>
-            <div id="alert"></div>
+            <div id="alert" class="d-none mb-3"></div>
             <img src="/img/rudolf/1.jpg" class="float-end ms-3 mb-3 storyimg-28em">
             <p>Üdv a KódKihívás oldalán! Ez lesz az első kihívás, amivel szembe kell nézz!</p>
             <p>Karácsonyi díszbe öltözött a világ. A gyerekek izgatottan várják a Mikulás érkezését. Van azonban egy ország, melynek őrült uralkodója aknamezőkkel akarja távol tartani őt! Szerencsére a Mikulás repülve érkezik, így egyáltalán nem érdeklik a földön elrejtett robbanóanyagok. Az örök kétbalkezes rénszarvas, Rudolf azonban óriási hibát követ el: megbotlik egy aprócska repülő drónban. A szán megpördül, és csak a szerencsén múlik, hogy a Mikulás nem zuhan alá. Sajnos az ajándékok fele így is kiborul, és hosszú zuhanás után szétszóródik földön.</p>
@@ -47,15 +47,18 @@ require_once ROOT . "/private/snippets.php";
     take(1)
 }</pre>
             <p>Végre csinál valamit a robot! Mind a hat pályán elveszi, ami az 1. sloton van. Néha ajándék, néha bomba...</p>
-            <p><b class="fs-5">1. </b>Az az igazság, hogy most már meg is tudod oldani a feladatot: vedd el az összes ajándékot az összes pályáról! Sose nyúlj bombához! Cél: <b>28</b> pont! Tipp: akár több if utasítást is használhatsz. Nem biztos, hogy az <code>else</code> ágat használni kell, azt ki is hagyhatod! Ha nem sikerül elérni a pontszámot, akkor is mindig töltsd fel a legjobb próbálkozásodat!</p>
+            <p><b class="fs-5">1. </b>Az az igazság, hogy most már meg is tudod oldani a feladatot: vedd el az összes ajándékot az összes pályáról! Sose nyúlj bombához! Cél: <b>28</b> pont! Tipp: akár több if utasítást is használhatsz. Nem biztos, hogy az <code>else</code> ágat használni kell, azt ki is hagyhatod! Ha nem sikerül elérni a pontszámot, akkor is mindig töltsd fel a legjobb próbálkozásodat! Ha később találsz jobb megoldást, töltsd fel azt is!</p>
+            <?php echo Snippets::solutionForm('rudolf', 1); ?>
             <p>Ha kész vagy, olvass tovább! Megtanulunk egy új utasítást, amivel Rudolf még több pontot tud szerezni Mikinél! Ez a <code>defuse(X)</code> utasítás. Aki tud angolul, tudja, ez azt jelenti: hatástalanít. Bizony, további pontokért a kis robot a bombákat is hatástalanítani tudja! Van azonban egy apróság: mi történik, ha véletlenül nem egy bombát, hanem egy ajándékot szeretnél hatástalanítani? Nyilvánvaló: hát <span class="fw-bold text-danger">FELROBBAN</span>! Próbáld is ki ezzel az egyszerű utasítással:</p>
             <pre>function solution() {
     take(1)
     defuse(2)
 }</pre>
             <p><b class="fs-5">2. </b>Középhaladó feladat: szerzd meg az összes ajándékot és hatástalanítsd az összes bombát! Cél: <b>38</b> pont!</p>
+            <?php echo Snippets::solutionForm('rudolf', 2); ?>
             <p>Ki gondolta volna, van egy utolsó, varázslatos utasítás: <code>conjure(X)</code>, ami azt jelenti: elvarázsol! Nem is mondom meg, mit csinál. Próbáld ki magad! Figyeld, mi hány pontot ad!</p>
             <p><b class="fs-5">3. </b>Profi feladat: most, hogy mind a 4 utasítást/függvényt ismered, írj programot, ami a lehető legtöbb pontot szerzi! Hogy hogyan? Mit tudom én! Cél: az ultra kemény<b class="fs-1"> 48 </b>pont! Hajrá!</p>
+            <?php echo Snippets::solutionForm('rudolf', 3); ?>
         </div></div>
     </div>
     <?php echo Snippets::foot(); ?>
