@@ -4,13 +4,10 @@ function rs() {
 // * * * Megoldás * * *
 
 function solution() {
-    for ( let i = 0; i < 4; i = i + 1 ) {
-        take(i);
-        conjure(i);
-    }
 }
 
 // * * *
+
 
 solution(); }
 

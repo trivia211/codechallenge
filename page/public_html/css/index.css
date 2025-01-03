@@ -9,3 +9,13 @@
 #icon {
     height: 2em;
 }
+
+#you {
+    color: rgb(201, 177, 42);
+    font-weight: bold;
+}
+
+.storyimg-28em {
+    max-width: 50%;
+    max-height: 28em;
+}
