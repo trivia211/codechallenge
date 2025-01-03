@@ -1,0 +1,20 @@
+.navbar {
+    background-color: #b0deff;
+}
+
+.navbar-nav {
+    --bs-scroll-height: 55vh;
+}
+
+#icon {
+    height: 2em;
+}
+
+.alert>p:last-child {
+    margin-bottom: 0;
+}
+
+/* Bootstrap CSP violation fixes */
+.btn-close {
+    --bs-btn-close-bg: url("/img/close-button.svg");
+}

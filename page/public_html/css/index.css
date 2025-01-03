@@ -1,15 +1,3 @@
-.navbar {
-    background-color: #b0deff;
-}
-
-.navbar-nav {
-    --bs-scroll-height: 55vh;
-}
-
-#icon {
-    height: 2em;
-}
-
 #you {
     color: rgb(201, 177, 42);
     font-weight: bold;

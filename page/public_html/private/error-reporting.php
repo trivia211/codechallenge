@@ -1,7 +1,7 @@
 <?php
 
 // $type can be 'DEV' or 'PROD'
-function set_error_reporting($type) {
+function setErrorReporting($type) {
     if ( $type === 'DEV' ) {
         error_reporting(E_ALL);
         ini_set('display_errors', 'On');
