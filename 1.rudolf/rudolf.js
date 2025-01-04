@@ -184,6 +184,7 @@ function init() {
     sBg.depth = -100;
     createSpeedButtons();
     createSlots();
+    updateSlotIds();
     cgt.setGameSpeed(0.0);
 }
 
