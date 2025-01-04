@@ -11,7 +11,7 @@ require_once ROOT . "/private/snippets.php";
     <link href="/css/index.css" rel="stylesheet">
 </head>
 <body>
-    <?php echo Snippets::navbar("1. Rudolf"); ?>
+    <?php echo Snippets::navbar('challenge'); ?>
     <div class="container">
         <div class="row"><div class="col">
             <h1>1. Rudolf</h1>

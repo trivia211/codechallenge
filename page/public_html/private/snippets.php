@@ -12,39 +12,58 @@ abstract class Snippets {
             '<link href="/css/common.css" rel="stylesheet">';
     }
 
-    static function navbar($active) {
-        // *** could it be done so that the page dosen't scroll under the navbar, so scrolling to elements is easier?
-        return '<nav class="navbar navbar-expand-sm sticky-top mb-2"><div class="container ' .
+    // $page can be 'challenge' or 'results'
+    static function navbar($page) {
+        // *** could it be done so that the page doesn't scroll under the navbar, so scrolling to elements is easier?
+        $result = '<nav class="navbar navbar-expand-sm sticky-top mb-2"><div class="container ' .
                 'justify-content-start">' .
             '<a class="navbar-brand pt-0 pb-0 fs-3" href="/">' .
                 '<img src="/img/icon.png" id="icon" alt="KódKihívás" class="me-2">' .
                 'KódKihívás' .
             '</a>' .
-            '<span class="navbar-text">Válassz egy kihívást:</span>' .
-            '<ul class="navbar-nav navbar-nav-scroll">' .
-                '<li class="nav-item dropdown">' .
-                    '<a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" ' .
-                        'aria-expanded="false">' . htmlspecialchars($active) . '</a>' .
-                    '<ul class="dropdown-menu">' .
-                        '<li><a class="dropdown-item" href="/rudolf.php">1. Rudolf</a></li>' .
-                    '</ul>' .
-                '</li>' .
-            '</ul>' .
+            '<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapsible" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">' .
+                '<span class="navbar-toggler-icon"></span>' .
+            '</button>' .
+            '<div id="navbar-collapsible" class="collapse navbar-collapse mt-1 mt-sm-0">' .
+                '<span class="navbar-text">Válassz egy kihívást:</span>' .
+                '<ul class="navbar-nav navbar-nav-scroll">' .
+                    '<li class="nav-item dropdown">' .
+                        '<a id="nav-current-challenge" class="nav-link dropdown-toggle';
+        if ( $page === 'challenge' )
+            $result .= ' active';
+        $result .= '" role="button" data-bs-toggle="dropdown" aria-expanded="false"';
+        if ( $page === 'challenge' ) {
+            $activeChallengeName = basename($_SERVER['SCRIPT_NAME'], '.php');
+            $result .= ' data-challenge-name="' . htmlspecialchars($activeChallengeName) . '"';
+        }
+        $result .= '></a>' .
+                        '<ul id="nav-challenges" class="dropdown-menu"></ul>' .
+                    '</li>' .
+                    '<li class="nav-item">' .
+                        '<a class="nav-link';
+        if ( $page === 'results' )
+            $result .= ' active';
+        $result .= '" href="#">Eredmények</a>' .
+                    '</li>' .
+                '</ul>' .
+            '</div>' .
             '</div></nav>';
+        return $result;
     }
 
     // requires /js/challengepage.js to be included
-    static function solutionForm($challengeId, $excerciseNo) {
-        $id = $challengeId . '-' . $excerciseNo;
+    static function solutionForm($challengeName, $exerciseNo) {
+        $id = $challengeName . '-' . $exerciseNo;
         return '<div class="row mb-3">' .
-            '<form class="solution-form">' .
+            '<form action="/api/solutions.php" method="post" class="solution-form">' .
                 '<div class="col-lg-7"><div class="border rounded-3 p-2 bg-primary-subtle">' .
-                    '<input type="hidden" name="challengeId" value="' . $challengeId . '">' .
-                    '<input type="hidden" name="excerciseNo" value="' . $excerciseNo . '">' .
-                    '<legend>Megoldás beküldése: <b>' . $excerciseNo . '.</b> feladathoz</legend>' .
+                    '<input type="hidden" name="action" value="add">' .
+                    '<input type="hidden" name="challengeName" value="' . $challengeName . '">' .
+                    '<input type="hidden" name="exerciseNo" value="' . $exerciseNo . '">' .
+                    '<legend>Megoldás beküldése: <b>' . $exerciseNo . '.</b> feladathoz</legend>' .
                     '<div class="mb-3">' .
                         '<label for="sol-' . $id . '-player" class="form-label">Név</label>' .
-                        '<select id="sol-' . $id . '-player" class="form-select player-select" name="player" required></select>' .
+                        '<select id="sol-' . $id . '-player" class="form-select player-select" name="playerId" required></select>' .
                     '</div>' .
                     '<div class="mb-3">' .
                         '<label for="sol-' . $id . '-password" class="form-label">Jelszó</label>' .
@@ -52,7 +71,7 @@ abstract class Snippets {
                     '</div>' .
                     '<div class="mb-3">' .
                         '<label for="sol-' . $id . '-code" class="form-label">Másold ide a kódodat (solution függvényt)</label>' .
-                        '<textarea id="sol-' . $id . '-code" class="form-control" rows="3" required></textarea>' .
+                        '<textarea id="sol-' . $id . '-code" class="form-control" name="code" rows="3" required></textarea>' .
                     '</div>' .
                     '<button type="submit" class="btn btn-primary">Küldés</button>' .
                 '</div></div>' .

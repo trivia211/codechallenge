@@ -3,7 +3,7 @@ if ( !defined('ROOT') )
     define('ROOT', __DIR__ . "/..");
 require_once ROOT . "/private/common.php";
 
-class RequestError extends Exception { }
+class ParamsError extends Exception { }
 
 // *** should implement getters for data structures
 
@@ -12,7 +12,7 @@ abstract class Request {
     static function getVal($reqparams, $name) {
         if ( isset($reqparams[$name]) && $reqparams[$name] !== "" ) {
             if ( is_array($reqparams[$name]) )
-                throw new RequestError($name . " is an array.");
+                throw new ParamsError($name . " is an array.");
             return $reqparams[$name];
         } else
             return null;
@@ -21,20 +21,20 @@ abstract class Request {
     static function getMandatoryVal($reqparams, $name) {
         $result = self::getVal($reqparams, $name);
         if ( $result === null )
-            throw new RequestError("Missing " . $name . ".");
+            throw new ParamsError("Missing " . $name . ".");
         return $result;
     }
 
-    static function getStr($reqparams, $name, $maxlen = null, $multiline = false) {
+    static function getStr($reqparams, $name, $maxlen = null, $whitespaces = 'singleLine') {
         $result = self::getVal($reqparams, $name);
         if ( $result !== null )
-            self::prepareString($result, $maxlen, $name, $multiline);
+            self::prepareString($result, $maxlen, $name, $whitespaces);
         return $result;
     }
 
-    static function getMandatoryStr($reqparams, $name, $maxlen = null, $multiline = false) {
+    static function getMandatoryStr($reqparams, $name, $maxlen = null, $whitespaces = 'singleLine') {
         $result = self::getMandatoryVal($reqparams, $name);
-        self::prepareString($result, $maxlen, $name, $multiline);
+        self::prepareString($result, $maxlen, $name, $whitespaces);
         return $result;
     }
 
@@ -42,7 +42,7 @@ abstract class Request {
     static function getDate($reqparams, $name, $format = "!Y. m. d.") {
         if ( !is_array($format) )
             $format = [$format];
-        $val = self::getStr($reqparams, $name);
+        $val = self::getStr($reqparams, $name, 100);
         if ( $val === null )
             return null;
         foreach ( $format as $formatstr ) {
@@ -50,13 +50,13 @@ abstract class Request {
             if ( $result !== false )
                 return $result;
         }
-        throw new RequestError($name . " contains invalid date.");
+        throw new ParamsError($name . " contains invalid date.");
     }
 
     static function getMandatoryDate($reqparams, $name, $format = "!Y. m. d.") {
         $result = self::getDate($reqparams, $name, $format);
         if ( $result === null )
-            throw new RequestError("Missing " . $name . ".");
+            throw new ParamsError("Missing " . $name . ".");
         return $result;
     }
 
@@ -64,16 +64,16 @@ abstract class Request {
         // int array keys are automatically cast to int by PHP, so they don't need to be parsed
         if ( !is_int($val) ) {
             if ( is_array($val) )
-                throw new RequestError($name . " is an array.");
+                throw new ParamsError($name . " is an array.");
             $result = (int)$val;
             if ( (string)$result !== $val )
-                throw new RequestError($name . " contains invalid int: " . $val);
+                throw new ParamsError($name . " contains invalid int: " . $val);
         } else
             $result = $val;
         if ( $min !== null && $result < $min )
-            throw new RequestError($name . " too small: " . $val);
+            throw new ParamsError($name . " too small: " . $val);
         if ( $max !== null && $result > $max )
-            throw new RequestError($name . " too big: " . $val);
+            throw new ParamsError($name . " too big: " . $val);
         return $result;
     }
 
@@ -87,21 +87,21 @@ abstract class Request {
     static function getMandatoryInt($reqparams, $name, $min = null, $max = null) {
         $result = self::getInt($reqparams, $name, $min, $max);
         if ( $result === null )
-            throw new RequestError("Missing " . $name . ".");
+            throw new ParamsError("Missing " . $name . ".");
         return $result;
     }
 
     static function getEnum($reqparams, $name, $values) {
         $result = self::getVal($reqparams, $name);
         if ( $result !== null && !in_array($result, $values, true) )
-            throw new RequestError("Invalid " . $name . " value: " . $result . ".");
+            throw new ParamsError("Invalid " . $name . " value: " . $result . ".");
         return $result;
     }
 
     static function getMandatoryEnum($reqparams, $name, $values) {
         $result = self::getEnum($reqparams, $name, $values);
         if ( $result === null )
-            throw new RequestError("Missing " . $name . ".");
+            throw new ParamsError("Missing " . $name . ".");
         return $result;
     }
 
@@ -115,7 +115,7 @@ abstract class Request {
         if ( !isset($reqparams[$name]) )
             return false;
         if ( is_array($reqparams[$name]) )
-            throw new RequestError($name . " is not a bool.");
+            throw new ParamsError($name . " is not a bool.");
         $UC_FALSE_VALUES = ["", "0", "FALSE", "OFF"];
         return !in_array(strtoupper($reqparams[$name]), $UC_FALSE_VALUES, true);
     }
@@ -124,24 +124,24 @@ abstract class Request {
     static function getArray($reqparams, $name) {
         if ( isset($reqparams[$name]) && $reqparams[$name] !== "" ) {
             if ( !is_array($reqparams[$name]) )
-                throw new RequestError($name . " is not an array.");
+                throw new ParamsError($name . " is not an array.");
             return $reqparams[$name];
         } else
             return array();
     }
 
-    static function getStrList($reqparams, $name, $strmaxlen = null, $multiline = false,
+    static function getStrList($reqparams, $name, $strmaxlen = null, $whitespaces = 'singleLine',
                                $maxlen = null) {
-        $valFormatFunc = function($reqparams, $name) use ($strmaxlen, $multiline) {
-            return Request::getStr($reqparams, $name, $strmaxlen, $multiline);
+        $valFormatFunc = function($reqparams, $name) use ($strmaxlen, $whitespaces) {
+            return Request::getStr($reqparams, $name, $strmaxlen, $whitespaces);
         };
         return self::getList($reqparams, $name, $maxlen, $valFormatFunc);
     }
 
-    static function getMandatoryStrList($reqparams, $name, $strmaxlen = null, $multiline = false,
-                                        $maxlen = null) {
-        $valFormatFunc = function($reqparams, $name) use ($strmaxlen, $multiline) {
-            return Request::getMandatoryStr($reqparams, $name, $strmaxlen, $multiline);
+    static function getMandatoryStrList($reqparams, $name, $strmaxlen = null,
+                                        $whitespaces = 'singleLine', $maxlen = null) {
+        $valFormatFunc = function($reqparams, $name) use ($strmaxlen, $whitespaces) {
+            return Request::getMandatoryStr($reqparams, $name, $strmaxlen, $whitespaces);
         };
         return self::getList($reqparams, $name, $maxlen, $valFormatFunc);
     }
@@ -180,7 +180,7 @@ abstract class Request {
         $expKey = 0;
         foreach ( $result as $key=>$row ) {
             if ( $key !== $expKey || !is_array($row) )
-                throw new RequestError($name . " has wrong format.");
+                throw new ParamsError($name . " has wrong format.");
             ++$expKey;
         }
         return $result;
@@ -191,7 +191,7 @@ abstract class Request {
         $result = self::getArray($reqparams, $name);
         foreach ( $result as $row )
             if ( !is_array($row) )
-                throw new RequestError($name . " has wrong format.");
+                throw new ParamsError($name . " has wrong format.");
         return $result;
     }
 
@@ -201,9 +201,9 @@ abstract class Request {
         $expKey = 0;
         foreach ( $result as $key=>&$val ) {
             if ( $maxlen !== null && $expKey >= $maxlen )
-                throw new RequestError($name . " is too long.");
+                throw new ParamsError($name . " is too long.");
             if ( $key !== $expKey || is_array($val) )
-                throw new RequestError($name . " has wrong format.");
+                throw new ParamsError($name . " has wrong format.");
             if ( $valFormatFunc !==  null)
                 $val = $valFormatFunc($result, $key);
             ++$expKey;
@@ -212,15 +212,21 @@ abstract class Request {
         return $result;
     }
 
-    private static function prepareString(&$str, $maxlen, $name, $multiline) {
+    // $whitespaces can be 'singleLine', 'multiLine' (to trim string/lines) or 'keep'
+    private static function prepareString(&$str, $maxlen, $name, $whitespaces) {
         if ( !mb_check_encoding($str) )
-            throw new RequestError($name . " has invalid encoding.");
-        $pattern = ($multiline ? '/[\h]+/u' : '/[\s]+/u');
-        $str = trim(preg_replace($pattern, ' ', $str));
-        if ( $multiline )
+            throw new ParamsError($name . " has invalid encoding.");
+        if ( $whitespaces === 'singleLine' )
+            $str = trim(preg_replace('/[\s]+/u', ' ', $str));
+        else if ( $whitespaces === 'multiLine' ) {
+            $str = trim(preg_replace('/[\h]+/u', ' ', $str));
             $str = preg_replace('/(?: (?=\v)|(?<=\v) )/u', '', $str);
+        } else if ( $whitespaces === 'keep' )
+            ;
+        else
+            throw new Exception("Invalid whitespaces value.");
         if ( $maxlen !== null && mb_strlen($str) > $maxlen )
-            throw new RequestError($name . " is too long.");
+            throw new ParamsError($name . " is too long.");
     }
 }
 

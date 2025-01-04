@@ -4,7 +4,7 @@ if ( !defined('ROOT') )
 require_once ROOT . "/private/config.php";
 require_once ROOT . "/private/server.php";
 
-class PlayersServer extends Server {
+class ChallengesServer extends Server {
     function __construct() {
         parent::__construct(['ListServer']);
     }
@@ -18,12 +18,12 @@ class ListServer extends ActionServer {
    }
 
    protected function getAnswer() /* override */ {
-      $s = dbh()->prepare("SELECT id, name FROM players ORDER BY name");
+      $s = dbh()->prepare("SELECT name, title FROM challenges ORDER BY id");
       $s->execute();
       return $s->fetchAll(PDO::FETCH_ASSOC);
    }
 }
 
-(new PlayersServer())->serve();
+(new ChallengesServer())->serve();
 
 ?>

@@ -41,6 +41,17 @@
         return $('<textarea>').html(val).text();
     }
 
+    _this.submitFormAjax = function(form) {
+        return $.ajax({
+            url: form.attr('action'),
+            method: form.attr('method'),
+            data: new FormData(form[0]),
+            dataType: 'json',
+            processData: false,
+            contentType: false
+        });
+    }
+
 
     // options: see setAlertDefaultOptions + alertClass
     function showAlert(message, options) {
@@ -61,9 +72,12 @@
             .attr('role', 'alert')
             .html(alertHtml)
             .on('closed.bs.alert', function() {
-                options.alertDiv.addClass('d-none');
+                if ( options.alertDiv.is(':empty') )
+                    options.alertDiv.addClass('d-none');
             });
-        options.alertDiv.empty().append(subAlertDiv).removeClass('d-none');
+        if ( !options.append )
+            options.alertDiv.empty();
+        options.alertDiv.addClass('alert-container').append(subAlertDiv).removeClass('d-none');
         if ( options.scrollTo === 'top' )
             scrollTo(0, 0);
         else if ( options.scrollTo === 'alert' ) {
@@ -83,6 +97,8 @@
             options.htmlTitle = false;
         if ( options.scrollTo === undefined ) // can be 'top', 'alert' or 'none'
             options.scrollTo = 'top';
+        if ( options.append === undefined ) // append a new alert or replace any existing?
+            options.append = false;
     }
 })(window.cmn = window.cmn || {});
 
@@ -100,3 +116,32 @@ if ( !Element.prototype.scrollIntoViewIfNeeded )
 
 const htmlEncode = cmn.htmlEncode;
 const htmlDecode = cmn.htmlDecode;
+
+const challengesAjx = $.ajax({
+    url: "/api/challenges.php",
+    method: 'get',
+    dataType: 'json'
+});
+
+$(document).ready(function() {
+    challengesAjx
+    .done(function(challenges) {
+        const currentChallengeEl = $('#nav-current-challenge'),
+              currentChallengeName = currentChallengeEl.data('challengeName'),
+              challengeLst = $("#nav-challenges");
+        for ( let challenge of challenges ) {
+            if ( challenge.name === currentChallengeName )
+                currentChallengeEl.text(challenge.title);
+            let a = $('<a></a>')
+                .addClass('dropdown-item')
+                .attr('href', "/" + challenge.name + ".php")
+                .text(challenge.title);
+            let li = $('<li></li>').append(a);
+            challengeLst.append(li);
+        }
+    })
+    .fail(function(jqXHR, textstatus, errorThrown) {
+        const opts = {title: "Nem sikerült betölteni a kihívásokat.", append: true};
+        cmn.showAjaxErrorAlert(jqXHR, errorThrown, opts);
+    });
+});

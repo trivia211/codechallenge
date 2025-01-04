@@ -1,7 +1,7 @@
 const playersAjx = $.ajax({
     url: "/api/players.php",
     method: 'get',
-    dataType: 'json',
+    dataType: 'json'
 });
 
 $(document).ready(function() {
@@ -14,27 +14,23 @@ $(document).ready(function() {
             selects.append($('<option></option>').val(player.id).text(player.name));
     })
     .fail(function(jqXHR, textstatus, errorThrown) {
-        cmn.showAjaxErrorAlert(jqXHR, errorThrown, {title: 'Nem sikerült betölteni a játékosokat.'});
+        const opts = {title: 'Nem sikerült betölteni a játékosokat.', append: true};
+        cmn.showAjaxErrorAlert(jqXHR, errorThrown, opts);
     });
 
     $(".solution-form").submit(function(e) {
         e.preventDefault();
-        let data = new FormData(this);
+        let form = $(this);
         let alertOpts = {
-            alertDiv: $(this).find('.solution-alert'),
+            alertDiv: form.find('.solution-alert'),
             scrollTo: 'alert'
         }
-        $.ajax({
-            url: "/process/controls-server.php",
-            method: 'post',
-            data: data,
-            dataType: 'json',
-            processData: false,
-            contentType: false
-        })
+        cmn.submitFormAjax(form)
         .done(function(response) {
-            if ( response === true )
+            if ( response === true ) {
                 cmn.showSuccessAlert('Sikeresen beküldted a megoldást!', alertOpts);
+                form.find('textarea[name="code"]').val('');
+            }
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
             alertOpts.title = 'Nem sikerült elküldeni a megoldást.';
