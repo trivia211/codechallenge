@@ -139,6 +139,11 @@ $(document).ready(function() {
             let li = $('<li></li>').append(a);
             challengeLst.append(li);
         }
+        if ( currentChallengeEl.text() === "" ) {
+            currentChallengeEl.text("Válassz egy kihívást!");
+            $("#nav-choose-challenge-lab").addClass('d-none');
+        } else
+            $("#nav-choose-challenge-lab").removeClass('d-none');
     })
     .fail(function(jqXHR, textstatus, errorThrown) {
         const opts = {title: "Nem sikerült betölteni a kihívásokat.", append: true};

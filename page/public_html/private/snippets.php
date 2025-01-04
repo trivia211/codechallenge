@@ -25,7 +25,7 @@ abstract class Snippets {
                 '<span class="navbar-toggler-icon"></span>' .
             '</button>' .
             '<div id="navbar-collapsible" class="collapse navbar-collapse mt-1 mt-sm-0">' .
-                '<span class="navbar-text">Válassz egy kihívást:</span>' .
+                '<span id="nav-choose-challenge-lab" class="navbar-text">Válassz egy kihívást:</span>' .
                 '<ul class="navbar-nav navbar-nav-scroll">' .
                     '<li class="nav-item dropdown">' .
                         '<a id="nav-current-challenge" class="nav-link dropdown-toggle';
