@@ -9,5 +9,5 @@ $s->execute();
 $row = $s->fetch(PDO::FETCH_ASSOC);
 if ( $row === false )
    exit("No challenges found.");
-header("Location: /" . $row['name'] . ".php");
+header("Location: /" . $row['name']);
 ?>

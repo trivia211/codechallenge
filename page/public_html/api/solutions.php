@@ -12,10 +12,7 @@ class SolutionsServer extends Server {
 
 class AddServer extends ActionServer {
    static function action() /* override */ { return 'add'; }
-
-   function hasAccess() /* override */ {
-      return true;
-   }
+   function hasAccess() /* override */ { return true; }
 
 
    protected function getAnswer() /* override */ {

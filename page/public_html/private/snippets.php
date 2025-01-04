@@ -43,7 +43,7 @@ abstract class Snippets {
                         '<a class="nav-link';
         if ( $page === 'results' )
             $result .= ' active';
-        $result .= '" href="#">Eredmények</a>' .
+        $result .= '" href="/eredmenyek">Eredmények</a>' .
                     '</li>' .
                 '</ul>' .
             '</div>' .

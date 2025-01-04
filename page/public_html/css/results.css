@@ -1,0 +1,11 @@
+.results-table td {
+    width: 8em;
+    height: 8em;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+}
+
+.results-table td img {
+    height: auto;
+}

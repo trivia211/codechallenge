@@ -1,4 +1,9 @@
 - biztonságos apache konfigurációt beállítani neki (lásd: microdocssetup.txt, HELPER/... web-security.txt)
+- A root directory direktívába beletenni:
+    RewriteEngine On
+    RewriteRule ^eredmenyek$ results.php [QSA]
+    # all other /name urls without path and extension separator represent a challenge
+    RewriteRule ^([^\./]+)$ $1.php [QSA]
 - extra apache direktívák:
 <Directory /path/to/page/public_html/private>
     Require all denied

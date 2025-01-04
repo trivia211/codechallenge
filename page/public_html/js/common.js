@@ -134,7 +134,7 @@ $(document).ready(function() {
                 currentChallengeEl.text(challenge.title);
             let a = $('<a></a>')
                 .addClass('dropdown-item')
-                .attr('href', "/" + challenge.name + ".php")
+                .attr('href', "/" + challenge.name)
                 .text(challenge.title);
             let li = $('<li></li>').append(a);
             challengeLst.append(li);

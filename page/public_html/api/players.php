@@ -12,10 +12,7 @@ class PlayersServer extends Server {
 
 class ListServer extends ActionServer {
    static function action() /* override */ { return null; }
-
-   function hasAccess() /* override */ {
-      return true;
-   }
+   function hasAccess() /* override */ { return true; }
 
    protected function getAnswer() /* override */ {
       $s = dbh()->prepare("SELECT id, name FROM players ORDER BY name");

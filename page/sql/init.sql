@@ -15,4 +15,6 @@ INSERT INTO challenges VALUES (NULL, "rudolf", "1. Rudolf");
 SELECT LAST_INSERT_ID() INTO @rudolf_id;
 INSERT INTO challengeExercises (challengeId, no) VALUES (@rudolf_id, 1),(@rudolf_id, 2),(@rudolf_id, 3);
 
-CREATE TABLE solutions (id INT UNSIGNED AUTO_INCREMENT NOT NULL, playerId INT UNSIGNED NOT NULL, exerciseId INT UNSIGNED NOT NULL, code TEXT NOT NULL, PRIMARY KEY(id), FOREIGN KEY(playerId) REFERENCES players(id) ON DELETE CASCADE, FOREIGN KEY(exerciseId) REFERENCES challengeExercises(id)) ENGINE = 'InnoDB';
+CREATE TABLE solutions (id INT UNSIGNED AUTO_INCREMENT NOT NULL, playerId INT UNSIGNED NOT NULL, exerciseId INT UNSIGNED NOT NULL, code TEXT NOT NULL, PRIMARY KEY(id), addTime DATETIME(4) NOT NULL DEFAULT NOW(4), FOREIGN KEY(playerId) REFERENCES players(id) ON DELETE CASCADE, FOREIGN KEY(exerciseId) REFERENCES challengeExercises(id)) ENGINE = 'InnoDB';
+
+CREATE TABLE results (id INT UNSIGNED AUTO_INCREMENT NOT NULL, playerId INT UNSIGNED NOT NULL, challengeId INT UNSIGNED NOT NULL, result ENUM("1", "2", "3", "4") NOT NULL, PRIMARY KEY(id), FOREIGN KEY(playerId) REFERENCES players(id) ON DELETE CASCADE, FOREIGN KEY(challengeId) REFERENCES challenges(id) ON DELETE CASCADE, UNIQUE(playerId, challengeId)) ENGINE = 'InnoDB';
