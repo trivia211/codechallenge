@@ -18,7 +18,7 @@
     Require all denied
 </Directory>
 
-- npm telepítése (lásd: HELPER/... web-nodejs szerver.txt)
+- npm telepítése
 cd public_html/dist/public
 npm install [--omit=dev] # omit: prod serveren
 

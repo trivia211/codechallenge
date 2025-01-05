@@ -28,7 +28,8 @@ $(document).ready(function() {
         cmn.submitFormAjax(form)
         .done(function(response) {
             if ( response === true ) {
-                cmn.showSuccessAlert('Sikeresen beküldted a megoldást!', alertOpts);
+                cmn.showSuccessAlert('Sikeresen beküldted a megoldást! Kis türelmedet kérem, amíg ' +
+                    'megnézem, és felvezetem az Eredmények oldalra!', alertOpts);
                 form.find('textarea[name="code"]').val('');
             }
         })
