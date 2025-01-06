@@ -5,8 +5,12 @@ require_once ROOT . "/private/config.php";
 require_once ROOT . "/private/request.php";
 require_once ROOT . "/private/db.php";
 
-if ( Request::getStr($_GET, 'auth') !== "m31cxJEtqOPErJa" )
+try {
+    if ( Request::getStr($_GET, 'auth') !== "m31cxJEtqOPErJa" )
+        exit("Access denied.");
+} catch ( ParamsError $e ) {
     exit("Access denied.");
+}
 
 $s = dbh()->prepare("SELECT players.name, addTime, challenges.title, challengeExercises.no, code " .
     "FROM solutions JOIN players ON players.id = playerId " .
