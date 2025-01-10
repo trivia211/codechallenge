@@ -1,33 +1,31 @@
-- biztonságos apache konfigurációt beállítani neki (lásd: microdocssetup.txt, HELPER/... web-security.txt)
-- A root directory direktívába beletenni:
+- local/config.sample.php -> config.php másolatot létrehozni, beállítani
+
+- npm telepítése
+cd dist/public
+npm install [--omit=dev] # omit: prod serveren
+
+
+- A root Directory direktívába beletenni:
     RewriteEngine On
     RewriteRule ^eredmenyek$ results.php [QSA]
     # all other /name urls without path and extension separator represent a challenge
     RewriteRule ^([^\./]+)$ $1.php [QSA]
 - extra apache direktívák:
-<Directory /path/to/page/public_html/private>
+<Directory /path/to/public_html/private>
     Require all denied
 </Directory>
-<Directory /path/to/page/public_html/local>
+<Directory /path/to/public_html/local>
     Require all denied
 </Directory>
-<DirectoryMatch "^/path/to/page/public_html/dist/public/.*/dist">
+<DirectoryMatch "^/path/to/public_html/dist/public/.*/dist">
     Require all granted
 </DirectoryMatch>
-<Directory /path/to/page/public_html/dist>
+<Directory /path/to/public_html/dist>
     Require all denied
 </Directory>
 
-- npm telepítése
-cd public_html/dist/public
-npm install [--omit=dev] # omit: prod serveren
+- MySQL telepítése: bejelentkezve a codechallenge felhasználóval:
+    - sql/init.sql futtatása
+    - sql/change.sql futtatása
 
-- MySQL telepítése: lásd: microdocssetup.txt
-    - rootként:
-        CREATE USER 'codechallenge'@'localhost' IDENTIFIED BY 'jelszó';
-        GRANT ALL PRIVILEGES ON codechallenge.* TO 'codechallenge'@'localhost';
-    - bejelentkezve a felhasználóval
-        - sql/init.sql futtatása
-        - sql/change.sql futtatása
-
-- local/config.sample.php -> config.php másolatot létrehozni, beállítani
+- korábbi eredmények beállítása?
