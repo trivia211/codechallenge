@@ -17,7 +17,7 @@ npm install [--omit=dev] # omit: prod serveren
 <Directory /path/to/public_html/local>
     Require all denied
 </Directory>
-<DirectoryMatch "^/path/to/public_html/dist/public/.*/dist">
+<DirectoryMatch "^/path/to/public_html/dist/.*/dist">
     Require all granted
 </DirectoryMatch>
 <Directory /path/to/public_html/dist>

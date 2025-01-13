@@ -8,7 +8,7 @@ abstract class Snippets {
             '<title>KódKihívás</title>' .
             '<link rel="icon" href="favicon.ico">' .
             '<link rel="stylesheet" ' .
-                'href="/dist/public/node_modules/bootstrap/dist/css/bootstrap.min.css">' .
+                'href="/dist/node_modules/bootstrap/dist/css/bootstrap.min.css">' .
             '<link href="/css/common.css" rel="stylesheet">';
     }
 
@@ -82,8 +82,8 @@ abstract class Snippets {
     }
 
     static function foot() {
-        return '<script src="/dist/public/node_modules/jquery/dist/jquery.min.js"></script>' .
-            '<script src="/dist/public/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js">' .
+        return '<script src="/dist/node_modules/jquery/dist/jquery.min.js"></script>' .
+            '<script src="/dist/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js">' .
                 '</script>' .
             '<script src="/js/common.js"></script>';
     }
