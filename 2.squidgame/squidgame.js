@@ -4,7 +4,8 @@
 
 // * CodeGuppyTools *
 
-const repoPrefix = "https://raw.githubusercontent.com/trivia211/codechallenge_asset/main";
+const assetsPrefix = "https://prog.vikweb.hu/assets"
+const currentPrefix = assetsPrefix + "/1.squidgame"
 
 let cgt = {};
 (_this => {
@@ -157,13 +158,40 @@ let cgt = {};
         console.error("stopMovedSprite: Sprite is not moved.")
     }
 
+    _this.showSpeedButtons = async function(xOffset = 300) {
+        await _this.loadAssets({images: [
+            {name: 'speedPaused', url: assetsPrefix + "/speed_paused.png"},
+            {name: 'speedNormal', url: assetsPrefix + "/speed_normal.png"},
+            {name: 'speedFast', url: assetsPrefix + "/speed_fast.png"},
+            {name: 'speedFaster', url: assetsPrefix + "/speed_faster.png"}
+        ]})
+        let sPaused = sprite(cgt.getImg("speedPaused"), 22 + xOffset, 22, 0.5),
+           sNormal = sprite(cgt.getImg("speedNormal"), 62 + xOffset, 22, 0.5),
+           sFast = sprite(cgt.getImg("speedFast"), 102 + xOffset, 22, 0.5),
+           sFaster = sprite(cgt.getImg("speedFaster"), 142 + xOffset, 22, 0.5);
+        sPaused.onMousePressed = function() { cgt.setGameSpeed(0); };
+        sNormal.onMousePressed = function() { cgt.setGameSpeed(1); };
+        sFast.onMousePressed = function() { cgt.setGameSpeed(3); };
+        sFaster.onMousePressed = function() { cgt.setGameSpeed(20); };
+        tickData.speedBtns = [sPaused, sNormal, sFast, sFaster];
+    }
+
+    _this.removeSpeedBtns = function() {
+        if ( tickData.speedBtns === null )
+            return
+        for ( const sBtn of tickData.speedBtns )
+            sBtn.remove();
+        tickData.speedBtns = null;
+    }
+
 
     let imgs = {}, sounds = {}
     let tickData = {
         speed: 1.0,
         startTime: performance.now(),
         startVal: 0,
-        timers: []
+        timers: [],
+        speedBtns: null
     }
 
     let movedSprites = []
@@ -230,4 +258,3 @@ let cgt = {};
         return null
     }
 })(cgt)
-
