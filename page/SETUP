@@ -23,6 +23,9 @@ npm install [--omit=dev] # omit: prod serveren
 <Directory /path/to/public_html/dist>
     Require all denied
 </Directory>
+<Directory /path/to/public_html/assets>
+    Header always set Access-Control-Allow-Origin: *
+</Directory>
 
 - MySQL telepítése: bejelentkezve a codechallenge felhasználóval:
     - sql/init.sql futtatása

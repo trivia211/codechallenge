@@ -13,7 +13,8 @@ solution(); }
 
 // * CodeGuppyTools *
 
-const repoPrefix = "https://raw.githubusercontent.com/trivia211/codechallenge_asset/main";
+const assetsPrefix = "https://prog.vikweb.hu/assets"
+const currentPrefix = assetsPrefix + "/1.rudolf"
 
 let cgt = {};
 (_this => {
@@ -138,28 +139,26 @@ class ExitTestError extends Error {
     }
 }
 
-const urlPrefix = repoPrefix + "/1.rudolf/assets";
-
 const assets = {
     images: [
-        {name: 'background', url: urlPrefix + "/background.jpg"},
-        {name: 'bomb', url: urlPrefix + "/bomb.png"},
-        {name: 'boom', url: urlPrefix + "/boom.png"},
-        {name: 'gift', url: urlPrefix + "/gift.png"},
-        {name: 'screwdriver', url: urlPrefix + "/screwdriver.png"},
-        {name: 'slot', url: urlPrefix + "/slot.png"},
-        {name: 'take', url: urlPrefix + "/take.png"},
-        {name: 'wand', url: urlPrefix + "/wand.png"},
-        {name: 'speedPaused', url: repoPrefix + "/assets/speed_paused.png"},
-        {name: 'speedNormal', url: repoPrefix + "/assets/speed_normal.png"},
-        {name: 'speedFast', url: repoPrefix + "/assets/speed_fast.png"},
-        {name: 'speedFaster', url: repoPrefix + "/assets/speed_faster.png"}
+        {name: 'background', url: currentPrefix + "/background.jpg"},
+        {name: 'bomb', url: currentPrefix + "/bomb.png"},
+        {name: 'boom', url: currentPrefix + "/boom.png"},
+        {name: 'gift', url: currentPrefix + "/gift.png"},
+        {name: 'screwdriver', url: currentPrefix + "/screwdriver.png"},
+        {name: 'slot', url: currentPrefix + "/slot.png"},
+        {name: 'take', url: currentPrefix + "/take.png"},
+        {name: 'wand', url: currentPrefix + "/wand.png"},
+        {name: 'speedPaused', url: assetsPrefix + "/speed_paused.png"},
+        {name: 'speedNormal', url: assetsPrefix + "/speed_normal.png"},
+        {name: 'speedFast', url: assetsPrefix + "/speed_fast.png"},
+        {name: 'speedFaster', url: assetsPrefix + "/speed_faster.png"}
     ],
     sounds: [
-        {name: 'action', url: urlPrefix + "/action.mp3"},
-        {name: 'acquire', url: urlPrefix + "/acquire.mp3"},
-        {name: 'boom', url: urlPrefix + "/boom.mp3"},
-        {name: 'success', url: urlPrefix + "/success.mp3"}
+        {name: 'action', url: currentPrefix + "/action.mp3"},
+        {name: 'acquire', url: currentPrefix + "/acquire.mp3"},
+        {name: 'boom', url: currentPrefix + "/boom.mp3"},
+        {name: 'success', url: currentPrefix + "/success.mp3"}
     ]
 };
 const testConfigs = [
