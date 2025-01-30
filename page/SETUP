@@ -7,9 +7,10 @@ npm install [--omit=dev] # omit: prod serveren
 
 - A root Directory direktívába beletenni:
     RewriteEngine On
+    RewriteRule ^tudastar$ knowledgebase.php [QSA]
     RewriteRule ^eredmenyek$ results.php [QSA]
     # all other /name urls without path and extension separator represent a challenge
-    RewriteRule ^([^\./]+)$ $1.php [QSA]
+    RewriteRule ^([a-zA-Z0-9_\-]+)$ $1.php [QSA]
 - extra apache direktívák:
 <Directory /path/to/public_html/private>
     Require all denied

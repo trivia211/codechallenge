@@ -1,4 +1,6 @@
 <?php
+if ( !defined('ROOT') )
+    define('ROOT', __DIR__ . "/..");
 
 // *** would be better to load them from template files
 abstract class Snippets {
@@ -6,19 +8,26 @@ abstract class Snippets {
         return '<meta charset="utf-8">' .
             '<meta name="viewport" content="width=device-width, initial-scale=1">' .
             '<title>KódKihívás</title>' .
-            '<link rel="icon" href="favicon.ico">' .
+            '<link rel="icon" href="/img/icon.png">' .
             '<link rel="stylesheet" ' .
                 'href="/dist/node_modules/bootstrap/dist/css/bootstrap.min.css">' .
             '<link href="/css/common.css" rel="stylesheet">';
     }
 
-    // $page can be 'challenge' or 'results'
+    // $page can be 'challenge', 'knowledgebase' or 'results'
     static function navbar($page) {
         // *** could it be done so that the page doesn't scroll under the navbar, so scrolling to elements is easier?
+        if ( $page === 'challenge' ) {
+            $activeChallengeName = basename($_SERVER['SCRIPT_NAME'], '.php');
+            $iconPath = "/img/" . $activeChallengeName . "/icon.png";
+            if ( !@is_file(ROOT . $iconPath) )
+                $iconPath = "/img/icon.png";
+        } else
+            $iconPath = "/img/icon.png";
         $result = '<nav class="navbar navbar-expand-sm sticky-top mb-2"><div class="container ' .
                 'justify-content-start">' .
             '<a class="navbar-brand pt-0 pb-0 fs-3" href="/">' .
-                '<img src="/img/icon.png" id="icon" alt="KódKihívás" class="me-2">' .
+                '<img src="' . htmlspecialchars($iconPath) . '" id="icon" alt="KódKihívás" class="me-2">' .
                 'KódKihívás' .
             '</a>' .
             '<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapsible" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">' .
@@ -32,12 +41,16 @@ abstract class Snippets {
         if ( $page === 'challenge' )
             $result .= ' active';
         $result .= '" role="button" data-bs-toggle="dropdown" aria-expanded="false"';
-        if ( $page === 'challenge' ) {
-            $activeChallengeName = basename($_SERVER['SCRIPT_NAME'], '.php');
+        if ( $page === 'challenge' )
             $result .= ' data-challenge-name="' . htmlspecialchars($activeChallengeName) . '"';
-        }
         $result .= '></a>' .
                         '<ul id="nav-challenges" class="dropdown-menu"></ul>' .
+                    '</li>' .
+                    '<li class="nav-item">' .
+                        '<a class="nav-link';
+        if ( $page === 'knowledgebase' )
+            $result .= ' active';
+        $result .= '" href="/tudastar">Tudástár</a>' .
                     '</li>' .
                     '<li class="nav-item">' .
                         '<a class="nav-link';
