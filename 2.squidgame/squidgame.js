@@ -76,10 +76,10 @@ let cgt = {};
         return tickData.speed
     }
 
-    _this.setTickTimeout = function(callback, tickMs) {
+    _this.setTickTimeout = function(callback, tick) {
         let now = performance.now()
         let timer = {
-            endTick: _this.getTick(now) + tickMs,
+            endTick: _this.getTick(now) + tick,
             timeoutId: null,
             callback
         }
@@ -99,21 +99,27 @@ let cgt = {};
     }
 
     // returns a promise
-    _this.sleep = function(tickMs) {
+    _this.tickSleep = function(tick) {
         return new Promise(resolve => {
-            _this.setTickTimeout(resolve, tickMs)
+            _this.setTickTimeout(resolve, tick)
+        })
+    }
+
+    _this.sleep = function(ms) {
+        return new Promise(resolve => {
+            setTimeout(resolve, ms)
         })
     }
 
     // dir: {x: , y:}
-    _this.floatSprite = function(sprite, dir, tickDuration) {
+    _this.floatSprite = function(sprite, dir, durationTick) {
         dir = Object.assign({}, dir)
         if ( dir.x === undefined )
             dir.x = 0;
         if ( dir.y === undefined )
             dir.y = 0;
         let ms = findMovedSprite(sprite)
-        const float = {dir, tickDuration, startTick: _this.getTick()}
+        const float = {dir, durationTick, startTick: _this.getTick()}
         if ( ms === null ) {
             ms = {
                 sprite,
@@ -127,21 +133,79 @@ let cgt = {};
             ms.float = float
     }
 
-    _this.moveSprite = function(sprite, to, tickDuration) {
+    // speedOrDuration must be either {durationTick: } or {speedPxPerTickS: }
+    _this.moveSprite = function(sprite, to, speedOrDuration) {
+        if ( speedOrDuration.durationTick === undefined &&
+                speedOrDuration.speedPxPerTickS === undefined)
+            throw new Error("Invalid speedOrDuration in moveSprite")
         let ms = findMovedSprite(sprite)
-        const move = {to: Object.assign({}, to), startTick: _this.getTick(), tickDuration}
         if ( ms === null ) {
             ms = {
                 sprite,
                 update: sprite.update,
-                center: {x: sprite.x, y: sprite.y},
-                move
+                center: {x: sprite.x, y: sprite.y}
             }
             movedSprites.push(ms)
             setupMovedSpriteUpdate(ms)
-        } else
-            ms.move = move
-        ms.move.from = Object.assign({}, ms.center)
+        } else {
+            if ( ms.move !== undefined )
+                ms.move.resolve(false)
+            else if ( ms.orbit !== undefined )
+                delete ms.orbit
+        }
+        let durationTick
+        if ( speedOrDuration.durationTick !== undefined )
+            durationTick = speedOrDuration.durationTick
+        else {
+            const distPx = Math.sqrt((to.x - ms.center.x) ** 2 + (to.y - ms.center.y) ** 2)
+            durationTick = distPx / speedOrDuration.speedPxPerTickS * 1000
+        }
+        ms.move = {
+            to: Object.assign({}, to),
+            startTick: _this.getTick(),
+            durationTick,
+            from: Object.assign({}, ms.center)
+        }
+        return new Promise((resolve, reject) => {
+            ms.move.resolve = resolve
+        })
+    }
+
+    // speed must be either {degPerTickS: } or {pxPerTickS: } (circumferential velocity)
+    _this.orbitSprite = function(sprite, center, speed) {
+        if ( speed.degPerTickS === undefined && speed.pxPerTickS === undefined )
+            throw new Error("Invalid speed in orbitSprite")
+        let ms = findMovedSprite(sprite)
+        if ( ms === null ) {
+            ms = {
+                sprite,
+                update: sprite.update,
+                center: {x: sprite.x, y: sprite.y}
+            }
+            movedSprites.push(ms)
+            setupMovedSpriteUpdate(ms)
+        } else {
+            if ( ms.move !== undefined ) {
+                ms.move.resolve(false)
+                delete ms.move
+            }
+        }
+        const centerDiff = {x: ms.center.x - center.x, y: ms.center.y - center.y}
+        const distFromCenter = Math.sqrt(centerDiff.x ** 2 + centerDiff.y ** 2)
+        let degPerTickS
+        if ( speed.degPerTickS !== undefined )
+            degPerTickS = speed.degPerTickS
+        else if ( distFromCenter !== 0.0 )
+            degPerTickS = speed.pxPerTickS / distFromCenter / Math.PI * 180
+        else
+            degPerTickS = 0
+        ms.orbit = {
+            center,
+            distFromCenter,
+            degPerTickS,
+            startTick: _this.getTick(),
+            startDeg: getDeg(centerDiff, distFromCenter)
+        }
     }
 
     _this.stopMovedSprite = function(sprite) {
@@ -152,6 +216,8 @@ let cgt = {};
                 ms.sprite.x = ms.center.x
                 ms.sprite.y = ms.center.y
                 movedSprites.splice(i, 1)
+                if ( ms.move !== undefined )
+                    ms.move.resolve(false)
                 return
             }
         }
@@ -159,12 +225,17 @@ let cgt = {};
     }
 
     _this.showSpeedButtons = async function(xOffset = 300) {
+        if ( tickData.speedBtns !== null )
+            return
+        tickData.speedBtns = false
         await _this.loadAssets({images: [
             {name: 'speedPaused', url: assetsPrefix + "/speed_paused.png"},
             {name: 'speedNormal', url: assetsPrefix + "/speed_normal.png"},
             {name: 'speedFast', url: assetsPrefix + "/speed_fast.png"},
             {name: 'speedFaster', url: assetsPrefix + "/speed_faster.png"}
         ]})
+        if ( tickData.speedBtns === null )
+            return
         let sPaused = sprite(cgt.getImg("speedPaused"), 22 + xOffset, 22, 0.5),
            sNormal = sprite(cgt.getImg("speedNormal"), 62 + xOffset, 22, 0.5),
            sFast = sprite(cgt.getImg("speedFast"), 102 + xOffset, 22, 0.5),
@@ -179,6 +250,10 @@ let cgt = {};
     _this.removeSpeedBtns = function() {
         if ( tickData.speedBtns === null )
             return
+        if ( tickData.speedBtns === false ) {
+            tickData.speedBtns = null
+            return
+        }
         for ( const sBtn of tickData.speedBtns )
             sBtn.remove();
         tickData.speedBtns = null;
@@ -191,7 +266,7 @@ let cgt = {};
         startTime: performance.now(),
         startVal: 0,
         timers: [],
-        speedBtns: null
+        speedBtns: null // false while loading
     }
 
     let movedSprites = []
@@ -223,30 +298,38 @@ let cgt = {};
 
             const move = movedSprite.move
             if ( move !== undefined ) {
-                if ( now >= move.startTick + move.tickDuration ) {
+                if ( now >= move.startTick + move.durationTick ) {
                     movedSprite.center = Object.assign({}, move.to)
+                    movedSprite.move.resolve(true)
+                    delete movedSprite.move
                     if ( movedSprite.float === undefined ) {
                         _this.stopMovedSprite(sprt)
                         return
                     }
-                    delete movedSprite.move
                 } else {
-                    const ratio = ((now - move.startTick) / move.tickDuration)
+                    const ratio = ((now - move.startTick) / move.durationTick)
                     movedSprite.center.x = move.from.x + (move.to.x - move.from.x) * ratio
                     movedSprite.center.y = move.from.y + (move.to.y - move.from.y) * ratio
-                    if ( movedSprite.float === undefined ) {
-                        sprt.x = movedSprite.center.x
-                        sprt.y = movedSprite.center.y
-                    }
                 }
+            }
+
+            const orbit = movedSprite.orbit
+            if ( orbit !== undefined ) {
+                const deg = orbit.startDeg + (now - orbit.startTick) * orbit.degPerTickS / 1000
+                const rad = deg * Math.PI / 180
+                movedSprite.center.x = orbit.center.x + Math.cos(rad) * orbit.distFromCenter
+                movedSprite.center.y = orbit.center.y - Math.sin(rad) * orbit.distFromCenter
             }
 
             const float = movedSprite.float
             if ( float !== undefined ) {
-                const phase = ((now - float.startTick) / float.tickDuration) % 1;
+                const phase = ((now - float.startTick) / float.durationTick) % 1;
                 const offsetRatio = Math.sin(phase * 2 * Math.PI);
                 sprt.x = movedSprite.center.x + float.dir.x * offsetRatio;
                 sprt.y = movedSprite.center.y + float.dir.y * offsetRatio;
+            } else {
+                sprt.x = movedSprite.center.x
+                sprt.y = movedSprite.center.y
             }
         }
     }
@@ -257,4 +340,136 @@ let cgt = {};
                 return ms
         return null
     }
+
+    function getDeg(vec, length = null) {
+        if ( length === null )
+            length = Math.sqrt(vec.x ** 2 + vec.y ** 2)
+        if ( length === 0 )
+            return 0
+        let deg = Math.acos(vec.x / length) * 180 / Math.PI
+        if ( vec.y > 0 )
+            deg = 360 - deg
+        return deg
+    }
 })(cgt)
+
+let cmdRecorder = {};
+(_this => {
+    _this.clearCommands = function() {
+        if ( recording )
+            unregisterCommands()
+        commands = {}
+        recordedCommands = []
+    }
+
+    // when a global function called name is called: during recording recordFunc, during replay
+    // replayFunc will be called. if any of those is null, it will not be called (it will still be
+    // recorded). if replayFunc returns a Promise, it will be awaited for before continuing the replay.
+    // if local is set, a locally defined function will be replaced using eval()
+    // see also: setFuncFirstParam.
+    _this.addCommand = function(name, recordFunc, replayFunc, local = false) {
+        if ( commands[name] !== undefined )
+            throw new Error(`${name} is already added`)
+        let command = {recordFunc, replayFunc, local}
+        commands[name] = command
+        if ( recording )
+            registerCommands({[name]: command})
+    }
+
+    _this.removeCommand = function(name) {
+        if ( commands[name] === undefined )
+            throw new Error(`${name} is not added`)
+        if ( recording )
+            unregisterCommands({[name]: commands[name]})
+        delete commands[name]
+        recordedCommands = recordedCommands.filter((rCmd) => rCmd.name !== name)
+    }
+
+    // if set to anything else then undefined, this value will be prepended to the parameter list of the
+    // called recordFuncs and replayFuncs
+    _this.setFuncFirstParam = function(param) {
+        funcFirstParam = param
+    }
+
+    // clears recorded commands
+    _this.startRecording = function() {
+        _this.resumeRecording()
+        recordedCommands = []
+    }
+
+    _this.resumeRecording = function() {
+        if ( recording )
+            throw new Error("Already recording")
+        registerCommands()
+        recording = true
+    }
+
+    _this.stopRecording = function() {
+        if ( !recording )
+            throw new Error("Recording hasn't started")
+        unregisterCommands()
+        recording = false
+    }
+
+    _this.getRecordedCommands = function() {
+        return recordedCommands
+    }
+
+    _this.replay = async function() {
+        for ( const cmd of recordedCommands ) {
+            const func = commands[cmd.name].replayFunc
+            if ( func === null )
+                continue
+            const res = callFunc(commands[cmd.name].replayFunc, cmd.args)
+            if ( res instanceof Promise )
+                await res
+        }
+    }
+
+
+    let commands = {}
+    let recording = false
+    let funcFirstParam = undefined
+    let recordedCommands = []
+
+    function registerCommands(cmds = commands) {
+        for ( const [name, cmd] of Object.entries(cmds) ) {
+            const func = function(...args) {
+                recordedCommands.push({name, args: structuredClone(args)})
+                if ( cmd.recordFunc !== null )
+                    return callFunc(cmd.recordFunc, args) // may throw
+            }
+            if ( !cmd.local ) {
+                if ( window[name] !== undefined )
+                    cmd.origFunc = window[name]
+                window[name] = func
+            } else {
+                if ( eval(`typeof ${name}`) === 'undefined' )
+                    throw new Error(`Local function ${name} doesn't exist`)
+                cmd.origFunc = eval(name)
+                eval(`${name} = func`)
+            }
+        }
+    }
+
+    function unregisterCommands(cmds = commands) {
+        for ( const [name, cmd] of Object.entries(cmds) )
+            if ( !cmd.local ) {
+                if ( cmd.origFunc !== undefined ) {
+                    window[name] = cmd.origFunc
+                    delete cmd.origFunc
+                } else
+                    delete window[name]
+            } else {
+                eval(`${name} = cmd.origFunc`)
+                delete cmd.origFunc
+            }
+    }
+
+    function callFunc(func, args) {
+        if ( funcFirstParam === undefined )
+            return func(...args)
+        else
+            return func(funcFirstParam, ...args)
+    }
+})(cmdRecorder)
