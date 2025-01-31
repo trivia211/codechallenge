@@ -5,7 +5,7 @@
 // * CodeGuppyTools *
 
 const assetsPrefix = "https://prog.vikweb.hu/assets"
-const currentPrefix = assetsPrefix + "/1.squidgame"
+const currentPrefix = assetsPrefix + "/2.squidgame"
 
 let cgt = {};
 (_this => {
@@ -353,6 +353,8 @@ let cgt = {};
     }
 })(cgt)
 
+// * Command Recorder *
+
 let cmdRecorder = {};
 (_this => {
     _this.clearCommands = function() {
@@ -473,3 +475,211 @@ let cmdRecorder = {};
             return func(funcFirstParam, ...args)
     }
 })(cmdRecorder)
+
+
+// * 2. Squid Game *
+
+const PLAYERIMGCNT = 12
+
+const circlePoss = [
+    {x: 354.25, y:  179.5},
+    {x: 447.25, y:  174.5},
+    {x: 524.25, y:  226.5},
+    {x: 544.25, y:  312.5},
+    {x: 518.25, y:  397.5},
+    {x: 447.25, y:  451.5},
+    {x: 369.25, y:  440.5},
+    {x: 293.25, y:  387.5},
+    {x: 272.25, y:  305.5},
+    {x: 294.25, y:  230.5},
+    {x: 359.25, y:  247.5},
+    {x: 455.25, y:  245.5},
+    {x: 451.25, y:  376.5},
+    {x: 362.25, y:  370.5},
+    {x: 332.25, y:  305.5},
+    {x: 481.25, y:  310.5}
+]
+const roomPoss = [
+    [
+        {x: 132.25, y:  60.5},
+        {x: 107.25, y:  183.5},
+        {x: 77.25, y:  118.5},
+        {x: 156.25, y:  124.5}
+    ],
+    [
+        {x: 662.25, y:  55.5},
+        {x: 694.25, y:  186.5},
+        {x: 727.25, y:  122.5},
+        {x: 632.25, y:  121.5}
+    ],
+    [
+        {x: 105.25, y:  408.5},
+        {x: 138.25, y:  544.5},
+        {x: 173.25, y:  477.5},
+        {x: 68.25, y:  472.5}
+    ],
+    [
+        {x: 692.25, y:  408.5},
+        {x: 663.25, y:  545.5},
+        {x: 731.25, y:  474.5},
+        {x: 628.25, y:  477.5}
+    ]
+]
+const roomMiddlePoss= [
+    {x: 120.25, y:  116.5},
+    {x: 681.25, y:  120.5},
+    {x: 124.25, y:  478.5},
+    {x: 681.25, y:  474.5}
+]
+const outsidePoss = [
+    {x: 45.25, y:  250.5},
+    {x: 33.25, y:  364.5},
+    {x: 175.25, y:  248.5},
+    {x: 176.25, y:  346.5},
+    {x: 267.25, y:  536.5},
+    {x: 412.25, y:  550.5},
+    {x: 533.25, y:  557.5},
+    {x: 637.25, y:  279.5},
+    {x: 771.25, y:  234.5},
+    {x: 759.25, y:  341.5},
+    {x: 538.25, y:  34.5},
+    {x: 446.25, y:  93.5},
+    {x: 323.25, y:  38.5},
+    {x: 290.25, y:  113.5},
+    {x: 237.25, y:  32.5}
+]
+
+const assets = {
+    images: [
+        {name: 'bg', url: currentPrefix + "/bg.jpg"},
+        {name: 'guard', url: currentPrefix + "/guard.png"}
+    ],
+    sounds: [
+        {name: 'start', url: currentPrefix + "/start.mp3"},
+        {name: 'buzzer', url: currentPrefix + "/buzzer.mp3"},
+        {name: 'shot', url: currentPrefix + "/shot.mp3"},
+        {name: 'success', url: currentPrefix + "/success.mp3"},
+        {name: 'end', url: currentPrefix + "/end.mp3"},
+    ]
+};
+
+for ( let i = 0; i < PLAYERIMGCNT; ++i )
+    assets.images.push({name: 'player' + i, url: currentPrefix + "/player" + i + ".png"})
+
+let sPlayers = []
+let sGuard
+let firstLevel = true
+
+function init() {
+    clear();
+    sBg = sprite(cgt.getImg('bg'), 400, 300, 0.5);
+    sBg.depth = -100;
+    cgt.showSpeedButtons();
+    cgt.setGameSpeed(0.0);
+    sGuard = sprite(cgt.getImg('guard'), 268, 535, 0.5)
+    sGuard.depth = -50
+}
+
+function clearPlayers() {
+    for ( const sPlayer of sPlayers )
+        sPlayer.remove()
+    sPlayers = []
+}
+
+function createRandomPlayersOnCircle(cnt) {
+    if ( cnt > circlePoss.length )
+        throw new Error("Too many players on circle")
+    const poss = [...circlePoss]
+    for ( ; cnt > 0; --cnt ) {
+        const pos = rmRndArrayElem(poss)
+        let playerImgId = Math.floor(Math.random() * PLAYERIMGCNT)
+        let sPlayer = sprite(cgt.getImg('player' + playerImgId), pos.x, pos.y, 0.25)
+        sPlayers.push(sPlayer)
+        cgt.orbitSprite(sPlayer, {x: 410, y: 307}, {degPerTickS: 90})
+    }
+}
+
+function initLevel(level) {
+    clear()
+    clearPlayers()
+    createRandomPlayersOnCircle(level.playerCnt)
+    sGuard.x = 265
+    sGuard.y = 540
+}
+
+function stopSpinning() {
+    for ( const sPlayer of sPlayers )
+        cgt.stopMovedSprite(sPlayer)
+}
+
+function showNumber(level) {
+    textSize(500)
+    fill('#3f48d2')
+    text(level.number, 400, 350)
+    fill('white')
+}
+
+async function playersGoToRooms(level) {
+    let promises = []
+    let sRndPlayers = [...sPlayers]
+    for ( let i = 0; i < level.playerCntInRooms.length; ++i ) {
+        let rndRoomPoss = [...roomPoss[i]]
+        for ( let j = level.playerCntInRooms[i]; j > 0; --j ) {
+            const player = rmRndArrayElem(sRndPlayers)
+            const pos = rmRndArrayElem(rndRoomPoss)
+            const promise = cgt.moveSprite(player, pos, {speedPxPerTickS: 300})
+            promises.push(promise)
+        }
+    }
+    let rndOutsidePoss = [...outsidePoss]
+    while ( sRndPlayers.length ) {
+        const player = rmRndArrayElem(sRndPlayers)
+        const pos = rmRndArrayElem(rndOutsidePoss)
+        const promise = cgt.moveSprite(player, pos, {speedPxPerTickS: 220})
+        promises.push(promise)
+    }
+    await Promise.all(promises)
+}
+
+function rmRndArrayElem(array) {
+    if ( !array.length )
+        throw new Error("Can't get a random element of an empty array")
+    const id = Math.floor(Math.random() * array.length)
+    return array.splice(id, 1)[0]
+}
+
+clear()
+fill('white')
+textSize(30);
+textAlign(CENTER, CENTER)
+text("Betöltés...", 400, 300)
+
+try {
+    await cgt.loadAssets(assets);
+} catch ( e ) {
+    clear()
+    fill('red')
+    textSize(14)
+    text("Hiba történt a betöltés során: " + e, 0, 300, 800)
+    return
+}
+
+init();
+
+let level = {playerCntInRooms: [3, 2, 3, 4], playerCnt: 15, number: 3}
+
+initLevel(level)
+
+await cgt.tickSleep(0.1)
+cgt.getSnd('start').play()
+await cgt.tickSleep(firstLevel ? 4000 : 2500)
+
+stopSpinning()
+cgt.getSnd('buzzer').play()
+await cgt.tickSleep(500)
+showNumber(level)
+
+await cgt.tickSleep(1000)
+
+await playersGoToRooms(level)
+clear()
