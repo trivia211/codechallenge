@@ -1,4 +1,15 @@
+function ss() {
 
+
+// * * * Megoldás * * *
+
+function solution() {
+}
+
+// * * *
+
+
+solution(); }
 
 
 
@@ -474,10 +485,12 @@ let cmdRecorder = {};
         else
             return func(funcFirstParam, ...args)
     }
-})(cmdRecorder)
+})(cmdRecorder);
 
 
 // * 2. Squid Game *
+
+(async () => {
 
 const PLAYERIMGCNT = 12
 
@@ -525,7 +538,7 @@ const roomPoss = [
         {x: 628.25, y:  477.5}
     ]
 ]
-const roomMiddlePoss= [
+const roomMiddlePoss = [
     {x: 120.25, y:  116.5},
     {x: 681.25, y:  120.5},
     {x: 124.25, y:  478.5},
@@ -548,11 +561,23 @@ const outsidePoss = [
     {x: 290.25, y:  113.5},
     {x: 237.25, y:  32.5}
 ]
+const outsideMiddlePos = {x: 180, y: 300}
+
+const levels = [
+    {playerCntInRooms: [3, 3, 1, 3], playerCnt: 12, number: 3},
+    {playerCntInRooms: [1, 2, 2, 4], playerCnt: 13, number: 2},
+    {playerCntInRooms: [3, 2, 3, 0], playerCnt: 12, number: 3},
+    {playerCntInRooms: [2, 2, 2, 2], playerCnt: 8, number: 2},
+    {playerCntInRooms: [1, 0, 3, 1], playerCnt: 15, number: 1},
+    {playerCntInRooms: [2, 4, 0, 4], playerCnt: 10, number: 4}
+]
 
 const assets = {
     images: [
         {name: 'bg', url: currentPrefix + "/bg.jpg"},
-        {name: 'guard', url: currentPrefix + "/guard.png"}
+        {name: 'guard', url: currentPrefix + "/guard.png"},
+        {name: 'tick', url: currentPrefix + "/tick.png"},
+        {name: 'cross', url: currentPrefix + "/cross.png"}
     ],
     sounds: [
         {name: 'start', url: currentPrefix + "/start.mp3"},
@@ -569,6 +594,10 @@ for ( let i = 0; i < PLAYERIMGCNT; ++i )
 let sPlayers = []
 let sGuard
 let firstLevel = true
+let sRoomPlayers = [[], [], [], []]
+let sOutsidePlayers = []
+let sResults = []
+let allowedCommandsLeft
 
 function init() {
     clear();
@@ -594,6 +623,7 @@ function createRandomPlayersOnCircle(cnt) {
         const pos = rmRndArrayElem(poss)
         let playerImgId = Math.floor(Math.random() * PLAYERIMGCNT)
         let sPlayer = sprite(cgt.getImg('player' + playerImgId), pos.x, pos.y, 0.25)
+        sPlayer.depth = -30
         sPlayers.push(sPlayer)
         cgt.orbitSprite(sPlayer, {x: 410, y: 307}, {degPerTickS: 90})
     }
@@ -602,9 +632,12 @@ function createRandomPlayersOnCircle(cnt) {
 function initLevel(level) {
     clear()
     clearPlayers()
+    removeResults()
     createRandomPlayersOnCircle(level.playerCnt)
     sGuard.x = 265
     sGuard.y = 540
+    sRoomPlayers = [[], [], [], []]
+    sOutsidePlayers = []
 }
 
 function stopSpinning() {
@@ -612,10 +645,10 @@ function stopSpinning() {
         cgt.stopMovedSprite(sPlayer)
 }
 
-function showNumber(level) {
-    textSize(500)
+function showNumber(level, big) {
+    textSize(big ? 500 : 200)
     fill('#3f48d2')
-    text(level.number, 400, 350)
+    text(level.number, 400, big ? 350 : 325)
     fill('white')
 }
 
@@ -627,6 +660,7 @@ async function playersGoToRooms(level) {
         for ( let j = level.playerCntInRooms[i]; j > 0; --j ) {
             const player = rmRndArrayElem(sRndPlayers)
             const pos = rmRndArrayElem(rndRoomPoss)
+            sRoomPlayers[i].push(player)
             const promise = cgt.moveSprite(player, pos, {speedPxPerTickS: 300})
             promises.push(promise)
         }
@@ -635,10 +669,68 @@ async function playersGoToRooms(level) {
     while ( sRndPlayers.length ) {
         const player = rmRndArrayElem(sRndPlayers)
         const pos = rmRndArrayElem(rndOutsidePoss)
+        sOutsidePlayers.push(player)
         const promise = cgt.moveSprite(player, pos, {speedPxPerTickS: 220})
         promises.push(promise)
     }
     await Promise.all(promises)
+}
+
+async function killOutsidPlayers() {
+    for ( const sOP of [...sOutsidePlayers] ) {
+        await cgt.moveSprite(sGuard, {x: sOP.x, y: sOP.y}, {durationTick: 500})
+        await cgt.tickSleep(150)
+        cgt.getSnd('shot').play()
+        removePlayer(sOP)
+    }
+}
+
+async function killRoomPlayers(roomId) {
+    await cgt.moveSprite(sGuard, roomMiddlePoss[roomId], {durationTick: 500})
+    await cgt.tickSleep(150)
+    for ( let i = sRoomPlayers[roomId].length-1; i >= 0; --i ) {
+        cgt.getSnd('shot').play()
+        removePlayer(sRoomPlayers[roomId][i])
+        if ( i !== 0 )
+            await cgt.tickSleep(300)
+    }
+
+}
+
+function showResults(roomResults, outsideResult) {
+    for ( let i = 0; i < roomResults.length; ++i ) {
+        let result = roomResults[i]
+        let middle = roomMiddlePoss[i]
+        let sResult = sprite(cgt.getImg(result ? 'tick' : 'cross'), middle.x, middle.y, 0.35)
+        sResult.depth = -10
+        sResults.push(sResult)
+    }
+    let sResult = sprite(cgt.getImg(outsideResult ? 'tick' : 'cross'),
+        outsideMiddlePos.x, outsideMiddlePos.y, 0.35)
+    sResult.depth = -10
+    sResults.push(sResult)
+}
+
+function removePlayer(sPlayer) {
+    let id = sPlayers.indexOf(sPlayer)
+    if ( id === -1 )
+        throw new Error("Player to be removed doesn't exist")
+    sPlayers.splice(id, 1)
+    for ( const sPsInR of sRoomPlayers ) {
+        id = sPlayers.indexOf(sPlayer)
+        if ( id !== -1 )
+            sPsInR.splice(id, 1)
+    }
+    id = sOutsidePlayers.indexOf(sPlayer)
+    if ( id !== -1 )
+        sOutsidePlayers.splice(id, 1)
+    sPlayer.remove()
+}
+
+function removeResults() {
+    for ( let sResult of sResults )
+        sResult.remove()
+    sResults = []
 }
 
 function rmRndArrayElem(array) {
@@ -665,21 +757,46 @@ try {
 }
 
 init();
+cmdRecorder.addCommand('outsideCnt')
+cmdRecorder.addCommand('roomCnt')
+cmdRecorder.addCommand('killOutsidePlayers')
+cmdRecorder.addCommand('killRoomPlayers')
+cmdRecorder.addCommand('print', null, print, true)
+cmdRecorder.addCommand('println', null, println, true)
 
-let level = {playerCntInRooms: [3, 2, 3, 4], playerCnt: 15, number: 3}
+for ( const level of levels ) {
+    initLevel(level)
 
-initLevel(level)
+    if ( firstLevel ) {
+        await cgt.tickSleep(0.1)
+        cgt.getSnd('start').play()
+    }
+    await cgt.tickSleep(firstLevel ? 4000 : 2500)
 
-await cgt.tickSleep(0.1)
-cgt.getSnd('start').play()
-await cgt.tickSleep(firstLevel ? 4000 : 2500)
+    stopSpinning()
+    cgt.getSnd('buzzer').play()
+    showNumber(level, true)
 
-stopSpinning()
-cgt.getSnd('buzzer').play()
-await cgt.tickSleep(500)
-showNumber(level)
+    await cgt.tickSleep(1200)
+    clear()
+    showNumber(level, false)
 
-await cgt.tickSleep(1000)
+    await playersGoToRooms(level)
 
-await playersGoToRooms(level)
-clear()
+    await cgt.tickSleep(500)
+
+    allowedCommandsLeft = 30
+
+    await killOutsidPlayers()
+    for ( let i = 0; i < 4; ++i )
+        await killRoomPlayers(i)
+
+    await cgt.tickSleep(650)
+
+    showResults([true, true, false, true], true)
+
+    cgt.getSnd('success').play()
+    firstLevel = false
+}
+
+})()
