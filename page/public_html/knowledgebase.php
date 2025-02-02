@@ -55,7 +55,7 @@ else
 if ( jelszo !== "roblox" ) {
     println("BUMMM")
 }</pre>
-    <p>Van még néhány összehasonlítás: kisebb, nagyobb, kisebb vagy egyenlő, nagyobb vagy egyenlő: <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>. Pl. ha 2-est, vagy rosszabb jegyet kaptál, 9999 nap szobafogság:</p>
+    <p>Van még néhány összehasonlítás: kisebb, nagyobb, kisebb vagy egyenlő, nagyobb vagy egyenlő: <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>. Pl. ha 2-est, vagy rosszabb jegyet kaptál, kapsz 9999 nap szobafogságot:</p>
     <pre><span class="text-body-tertiary">let jegy = Number(prompt("Hanyast kaptál?"))</span>
 if ( jegy <= 2 ) {
     println("9999 nap szobafogság! Viszlát!")
@@ -70,7 +70,7 @@ print("Ezt a számot írtad be: ")
 println(szam)
 print("Ezt a szöveget írtad be: ")
 println(szoveg)</pre>
-    <p>Amikor változókat nevét írjuk le, sosem rakunk köré idézőjelet! Próbáld ki, mi történne, ha <code>szoveg</code> helyett <code>"szoveg"</code>-et írnál!</p>
+    <p>Amikor változók nevét írjuk le, sosem rakunk köré idézőjelet! Próbáld ki, mi történne, ha <code>szoveg</code> helyett <code>"szoveg"</code>-et írnál!</p>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
     <script src="/js/knowledgebase.js"></script>
