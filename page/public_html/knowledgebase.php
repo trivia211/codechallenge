@@ -70,7 +70,7 @@ print("Ezt a számot írtad be: ")
 println(szam)
 print("Ezt a szöveget írtad be: ")
 println(szoveg)</pre>
-    <p>Amikor változókat nevét írjuk le, sosem rakunk köré idézőjelet! Próbáld ki mi történne, ha <code>szoveg</code> helyett <code>"szoveg"</code>-et írnál!</p>
+    <p>Amikor változókat nevét írjuk le, sosem rakunk köré idézőjelet! Próbáld ki, mi történne, ha <code>szoveg</code> helyett <code>"szoveg"</code>-et írnál!</p>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
     <script src="/js/knowledgebase.js"></script>

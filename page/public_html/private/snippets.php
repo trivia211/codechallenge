@@ -27,7 +27,7 @@ abstract class Snippets {
         $result = '<nav class="navbar navbar-expand-sm sticky-top mb-2"><div class="container ' .
                 'justify-content-start">' .
             '<a class="navbar-brand pt-0 pb-0 fs-3" href="/">' .
-                '<img src="' . htmlspecialchars($iconPath) . '" id="icon" alt="KódKihívás" class="me-2">' .
+                '<img src="' . htmlspecialchars($iconPath) . '" id="icon" alt="KódKihívás" class="me-2 rounded">' .
                 'KódKihívás' .
             '</a>' .
             '<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapsible" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">' .

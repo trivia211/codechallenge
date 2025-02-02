@@ -1,17 +1,17 @@
 function ss() {
 
 
-// * * * Megoldás * * *
+// * * * 2. Megoldás * * *
 
 function solution() {
+
 }
 
 // * * *
 
 
+
 solution(); }
-
-
 
 // * CodeGuppyTools *
 
@@ -258,7 +258,7 @@ let cgt = {};
         tickData.speedBtns = [sPaused, sNormal, sFast, sFaster];
     }
 
-    _this.removeSpeedBtns = function() {
+    _this.removeSpeedButtons = function() {
         if ( tickData.speedBtns === null )
             return
         if ( tickData.speedBtns === false ) {
@@ -369,7 +369,7 @@ let cgt = {};
 let cmdRecorder = {};
 (_this => {
     _this.clearCommands = function() {
-        if ( recording )
+        if ( _this.recording )
             unregisterCommands()
         commands = {}
         recordedCommands = []
@@ -385,17 +385,30 @@ let cmdRecorder = {};
             throw new Error(`${name} is already added`)
         let command = {recordFunc, replayFunc, local}
         commands[name] = command
-        if ( recording )
+        if ( _this.recording )
             registerCommands({[name]: command})
     }
 
     _this.removeCommand = function(name) {
         if ( commands[name] === undefined )
             throw new Error(`${name} is not added`)
-        if ( recording )
+        if ( _this.recording )
             unregisterCommands({[name]: commands[name]})
         delete commands[name]
         recordedCommands = recordedCommands.filter((rCmd) => rCmd.name !== name)
+    }
+
+    // exception will be surpressed when a handler is defined, but processing will end anyway when an
+    // exception is thrown. replayHandler may return a promise that will be awaited.
+    _this.setExceptionHandler = function(recordHandler, replayHandler) {
+        exceptionHandler.record = recordHandler
+        exceptionHandler.replay = replayHandler
+    }
+
+    // func will be called for each command before record/recordfunc. will be called even if
+    // record/replayfunc is null
+    _this.setBeforeCommand = function(func) {
+        beforeFunc = func
     }
 
     // if set to anything else then undefined, this value will be prepended to the parameter list of the
@@ -404,24 +417,23 @@ let cmdRecorder = {};
         funcFirstParam = param
     }
 
-    // clears recorded commands
-    _this.startRecording = function() {
-        _this.resumeRecording()
-        recordedCommands = []
-    }
-
-    _this.resumeRecording = function() {
-        if ( recording )
+    _this.record = function(actionFunc) {
+        if ( _this.recording )
             throw new Error("Already recording")
         registerCommands()
-        recording = true
-    }
-
-    _this.stopRecording = function() {
-        if ( !recording )
-            throw new Error("Recording hasn't started")
-        unregisterCommands()
-        recording = false
+        _this.recording = true
+        recordedCommands = []
+        try {
+            actionFunc()
+        } catch ( e ) {
+            if ( exceptionHandler.record !== null )
+                exceptionHandler.record(e)
+            else
+                throw e
+        } finally {
+            unregisterCommands()
+            _this.recording = false
+        }
     }
 
     _this.getRecordedCommands = function() {
@@ -429,28 +441,41 @@ let cmdRecorder = {};
     }
 
     _this.replay = async function() {
-        for ( const cmd of recordedCommands ) {
-            const func = commands[cmd.name].replayFunc
-            if ( func === null )
-                continue
-            const res = callFunc(commands[cmd.name].replayFunc, cmd.args)
-            if ( res instanceof Promise )
-                await res
+        _this.replaying = true
+        try {
+            for ( const cmd of recordedCommands ) {
+                const func = commands[cmd.name].replayFunc
+                const res = callCommandFuncs(commands[cmd.name].replayFunc, cmd.args)
+                if ( res instanceof Promise )
+                    await res
+            }
+        } catch ( e ) {
+            if ( exceptionHandler.replay !== null ) {
+                const res = exceptionHandler.replay(e)
+                if ( res instanceof Promise )
+                    await res
+            } else
+                throw e
+        } finally {
+            _this.replaying = false
         }
     }
 
+    _this.recording = false
+    _this.replaying = false
+
 
     let commands = {}
-    let recording = false
+    let beforeFunc = null
     let funcFirstParam = undefined
     let recordedCommands = []
+    let exceptionHandler = {record: null, replay: null}
 
     function registerCommands(cmds = commands) {
         for ( const [name, cmd] of Object.entries(cmds) ) {
             const func = function(...args) {
                 recordedCommands.push({name, args: structuredClone(args)})
-                if ( cmd.recordFunc !== null )
-                    return callFunc(cmd.recordFunc, args) // may throw
+                return callCommandFuncs(cmd.recordFunc, args)
             }
             if ( !cmd.local ) {
                 if ( window[name] !== undefined )
@@ -479,6 +504,13 @@ let cmdRecorder = {};
             }
     }
 
+    function callCommandFuncs(func, args) {
+        if ( beforeFunc !== null )
+            beforeFunc()
+        if ( func !== null )
+            return callFunc(func, args)
+    }
+
     function callFunc(func, args) {
         if ( funcFirstParam === undefined )
             return func(...args)
@@ -493,6 +525,8 @@ let cmdRecorder = {};
 (async () => {
 
 const PLAYERIMGCNT = 12
+
+class ExitTestError extends Error { }
 
 const circlePoss = [
     {x: 354.25, y:  179.5},
@@ -597,10 +631,10 @@ let firstLevel = true
 let sRoomPlayers = [[], [], [], []]
 let sOutsidePlayers = []
 let sResults = []
-let allowedCommandsLeft
 
 function init() {
     clear();
+    showRoomIds()
     sBg = sprite(cgt.getImg('bg'), 400, 300, 0.5);
     sBg.depth = -100;
     cgt.showSpeedButtons();
@@ -631,6 +665,7 @@ function createRandomPlayersOnCircle(cnt) {
 
 function initLevel(level) {
     clear()
+    showRoomIds()
     clearPlayers()
     removeResults()
     createRandomPlayersOnCircle(level.playerCnt)
@@ -645,10 +680,10 @@ function stopSpinning() {
         cgt.stopMovedSprite(sPlayer)
 }
 
-function showNumber(level, big) {
+function showNumber(number, big) {
     textSize(big ? 500 : 200)
     fill('#3f48d2')
-    text(level.number, 400, big ? 350 : 325)
+    text(number, 400, big ? 350 : 325)
     fill('white')
 }
 
@@ -676,16 +711,26 @@ async function playersGoToRooms(level) {
     await Promise.all(promises)
 }
 
-async function killOutsidPlayers() {
-    for ( const sOP of [...sOutsidePlayers] ) {
-        await cgt.moveSprite(sGuard, {x: sOP.x, y: sOP.y}, {durationTick: 500})
-        await cgt.tickSleep(150)
+async function killOutsidePlayers() {
+    recKillOutsidePlayers()
+    if ( sOutsidePlayers.length )
+        for ( const sOP of [...sOutsidePlayers] ) {
+            await cgt.moveSprite(sGuard, {x: sOP.x, y: sOP.y}, {durationTick: 500})
+            await cgt.tickSleep(150)
+            cgt.getSnd('shot').play()
+            removePlayer(sOP)
+        }
+    else {
+        await cgt.moveSprite(sGuard, outsideMiddlePos, {durationTick: 500})
         cgt.getSnd('shot').play()
-        removePlayer(sOP)
+        await cgt.tickSleep(150)
+        cgt.getSnd('buzzer').play()
+        await cgt.tickSleep(1000)
     }
 }
 
 async function killRoomPlayers(roomId) {
+    recKillRoomPlayers(roomId)
     await cgt.moveSprite(sGuard, roomMiddlePoss[roomId], {durationTick: 500})
     await cgt.tickSleep(150)
     for ( let i = sRoomPlayers[roomId].length-1; i >= 0; --i ) {
@@ -694,7 +739,6 @@ async function killRoomPlayers(roomId) {
         if ( i !== 0 )
             await cgt.tickSleep(300)
     }
-
 }
 
 function showResults(roomResults, outsideResult) {
@@ -733,6 +777,18 @@ function removeResults() {
     sResults = []
 }
 
+async function handleTestError(e) {
+    if ( !(e instanceof ExitTestError) )
+        throw e
+    textSize(40)
+    text(e.message, 0, 300, 800)
+    cgt.getSnd('buzzer').play()
+    await cgt.sleep(1500)
+    clear()
+    showRoomIds()
+    showNumber(gameState.number, false)
+}
+
 function rmRndArrayElem(array) {
     if ( !array.length )
         throw new Error("Can't get a random element of an empty array")
@@ -740,7 +796,81 @@ function rmRndArrayElem(array) {
     return array.splice(id, 1)[0]
 }
 
+function showRoomIds() {
+    const pos = 50
+    textSize(25)
+    fill('grey')
+    text("0", pos, pos)
+    text("1", 800 - pos, pos)
+    text("2", pos, 600 - pos)
+    text("3", 800 - pos, 600 - pos)
+    fill('white')
+}
+
+let gameState = null
+
+function initGameState(level) {
+    gameState = {
+        roomPlayers: [...level.playerCntInRooms],
+        outsidePlayers: level.playerCnt - level.playerCntInRooms.reduce((s, c) => s + c, 0),
+        number: level.number,
+        commandsLeft: 30,
+        shotInEmptyRoom: Array(level.playerCntInRooms.length).fill(false),
+        shotInEmptyOutside: false,
+        otherError: false
+    }
+}
+
+function assertRoomId(roomId) {
+    if ( !Number.isInteger(roomId) || roomId < 0 || roomId >= gameState.roomPlayers.length ) {
+        gameState.otherError = true
+        throw new ExitTestError("Érvénytelen szoba sorszám: " + roomId)
+    }
+}
+
+function assertNotTooManyCommands() {
+    if ( gameState.commandsLeft === 0 ) {
+        gameState.otherError = true
+        throw new ExitTestError("Túl sok utasítást próbálsz végrehajtani!")
+    }
+    --gameState.commandsLeft
+}
+
+function outsideCnt() {
+    return gameState.outsidePlayers
+}
+
+function roomCnt(roomId) {
+    assertRoomId(roomId)
+    return gameState.roomPlayers[roomId]
+}
+
+function number() {
+    return gameState.number
+}
+
+function recKillOutsidePlayers() {
+    if ( gameState.outsidePlayers === 0 )
+        gameState.shotInEmptyOutside = true
+    gameState.outsidePlayers = 0
+}
+
+function recKillRoomPlayers(roomId) {
+    assertRoomId(roomId)
+    gameState.roomPlayers[roomId] = 0
+}
+
+function getRoomResult(level, roomId) {
+    if ( gameState.shotInEmptyRoom[roomId] )
+        return false
+    if ( level.playerCntInRooms[roomId] === level.number )
+        return gameState.roomPlayers[roomId] === level.number
+    else
+        return gameState.roomPlayers[roomId] === 0
+}
+
 clear()
+showRoomIds()
 fill('white')
 textSize(30);
 textAlign(CENTER, CENTER)
@@ -750,19 +880,25 @@ try {
     await cgt.loadAssets(assets);
 } catch ( e ) {
     clear()
+    showRoomIds()
     fill('red')
     textSize(14)
     text("Hiba történt a betöltés során: " + e, 0, 300, 800)
     return
 }
 
-init();
-cmdRecorder.addCommand('outsideCnt')
-cmdRecorder.addCommand('roomCnt')
-cmdRecorder.addCommand('killOutsidePlayers')
-cmdRecorder.addCommand('killRoomPlayers')
+init()
+cmdRecorder.setExceptionHandler(() => {}, handleTestError)
+cmdRecorder.setBeforeCommand(assertNotTooManyCommands)
+cmdRecorder.addCommand('outsideCnt', outsideCnt, outsideCnt)
+cmdRecorder.addCommand('roomCnt', roomCnt, roomCnt)
+cmdRecorder.addCommand('number', number, number)
+cmdRecorder.addCommand('killOutside', recKillOutsidePlayers, killOutsidePlayers)
+cmdRecorder.addCommand('killRoom', recKillRoomPlayers, killRoomPlayers)
 cmdRecorder.addCommand('print', null, print, true)
 cmdRecorder.addCommand('println', null, println, true)
+
+let perfectRun = true
 
 for ( const level of levels ) {
     initLevel(level)
@@ -775,28 +911,52 @@ for ( const level of levels ) {
 
     stopSpinning()
     cgt.getSnd('buzzer').play()
-    showNumber(level, true)
+    showNumber(level.number, true)
 
     await cgt.tickSleep(1200)
     clear()
-    showNumber(level, false)
+    showRoomIds()
+    showNumber(level.number, false)
 
     await playersGoToRooms(level)
 
     await cgt.tickSleep(500)
 
-    allowedCommandsLeft = 30
-
-    await killOutsidPlayers()
-    for ( let i = 0; i < 4; ++i )
-        await killRoomPlayers(i)
+    initGameState(level)
+    cmdRecorder.record(ss)
+    initGameState(level)
+    await cmdRecorder.replay()
 
     await cgt.tickSleep(650)
 
-    showResults([true, true, false, true], true)
+    let outsideResult = !gameState.shotInEmptyOutside && gameState.outsidePlayers === 0
+    let roomResults = []
+    for ( let i = 0; i < gameState.roomPlayers.length; ++i )
+        roomResults.push(getRoomResult(level, i))
 
-    cgt.getSnd('success').play()
+    showResults(roomResults, outsideResult)
+
+    if ( outsideResult && !roomResults.includes(false) )
+        cgt.getSnd('success').play()
+    else {
+        cgt.getSnd('buzzer').play()
+        await cgt.sleep(1000)
+        perfectRun = false
+    }
+    if ( gameState.otherError )
+        perfectRun = false
+
+    await cgt.tickSleep(1000)
     firstLevel = false
 }
+
+textSize(40)
+if ( perfectRun ) {
+    cgt.getSnd('end').play()
+    fill('blue')
+    text("Játék letudva! :) Gratulálok!", 0, 300, 800)
+    fill('white')
+} else
+    text("VÉGE. Még pár dolgon tudsz javítani.", 0, 300, 800)
 
 })()
