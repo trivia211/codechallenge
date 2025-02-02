@@ -15,7 +15,8 @@ try {
 $s = dbh()->prepare("SELECT players.name, addTime, challenges.title, challengeExercises.no, code " .
     "FROM solutions JOIN players ON players.id = playerId " .
         "JOIN challengeExercises ON challengeExercises.id = exerciseId " .
-        "JOIN challenges ON challenges.id = challengeId");
+        "JOIN challenges ON challenges.id = challengeId " .
+    "ORDER BY addTime DESC");
 $s->execute();
 
 while ( ($row = $s->fetch(PDO::FETCH_ASSOC)) !== false )
