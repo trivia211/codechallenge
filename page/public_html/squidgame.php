@@ -16,7 +16,7 @@ require_once ROOT . "/private/snippets.php";
         <h1>2. Tintahaljáték</h1>
         <div id="alert" class="d-none mb-3"></div>
         <img src="/img/squidgame/level.jpg" class="float-end ms-3 mb-3 storyimg-28em">
-        <p>Tintahalfalván Tintahalék Tintahalkátékot játszanak. Te leszel a bíró! A játékosok felállnak a körhintára. Egyszer csak megjelenik egy szám. Mindenkinek be kell szaladni egy szobába. Aki kint marad, kiesik a játékból 🙁! Amelyik szobában nem annyian vannak, mint a szám, ők mind kiesnek.</p>
+        <p>Tintahalfalván Tintahalék Tintahaljátékot játszanak. Te leszel a bíró! A játékosok felállnak a körhintára. Egyszer csak megjelenik egy szám. Mindenkinek be kell szaladni egy szobába. Aki kint marad, kiesik a játékból 🙁! Amelyik szobában nem annyian vannak, mint a szám, ők mind kiesnek.</p>
         <p>Például, a képen a <b>3</b>-as szám van kiírva, minden szobában 3 embernek kell lennie. A két zöld arc, aki nincs bent egyik szobában sem, kiesett. A 0., 1. és 3. szobában 3-an vannak, ezért nem estek ki. A 2. szobában 1 arc van, ő kiesett. Mi a helyzet a piros ruhás alakkal? Ő a bíró, tehát sosem esik ki 😀!</p>
         <div class="alert alert-info overflow-x-hidden" role="alert">
             <h6 class="alert-heading">Pro tipp</h6>
