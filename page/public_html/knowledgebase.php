@@ -28,7 +28,7 @@ if ( nev === "Domi") {
 } else {
     println("Domit kérem!")
 }</pre>
-    <p>Sőt, ha nem egy, és nem két lehetőség van, további <code>else if</code> utasításokat használhatunk. Pl: bekéri a program, hogy hanyas a matek témazáród, és 5-ös, 4-esnél megdicsér, különben (3, 2, 1) nem:</p>
+    <p>Sőt, ha nem egy, és nem két lehetőség van, további <code>else if</code> utasításokat használhatunk. Pl. bekéri a program, hogy hanyas a matek témazáród, és 5-ös, 4-esnél megdicsér, különben (3, 2, 1) nem:</p>
 <pre><span class="text-body-tertiary">let jegy = Number(prompt("Hanyas lett a matek témazáród?"))</span>
 if ( jegy === 5 ) {
     println("WOW el se hiszem!")
