@@ -83,7 +83,7 @@ abstract class Snippets {
                         '<input type="password" id="sol-' . $id . '-password" class="form-control" name="password" required>' .
                     '</div>' .
                     '<div class="mb-3">' .
-                        '<label for="sol-' . $id . '-code" class="form-label">Másold ide a kódodat (solution függvényt)</label>' .
+                        '<label for="sol-' . $id . '-code" class="form-label">Másold ide a kódodat</label>' .
                         '<textarea id="sol-' . $id . '-code" class="form-control" name="code" rows="3" required></textarea>' .
                     '</div>' .
                     '<button type="submit" class="btn btn-primary">Küldés</button>' .
