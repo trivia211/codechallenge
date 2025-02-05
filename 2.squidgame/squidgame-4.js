@@ -675,12 +675,12 @@ const outsidePoss = [
 const outsideMiddlePos = {x: 180, y: 300}
 
 const levels = [
-    {playerCntInRooms: [1, 1, 0, 1], playerCnt: 4, number: 1},
-    {playerCntInRooms: [1, 2, 2, 2], playerCnt: 8, number: 2},
-    {playerCntInRooms: [3, 3, 3, 2], playerCnt: 12, number: 3},
-    {playerCntInRooms: [3, 2, 3, 3], playerCnt: 12, number: 3},
-    {playerCntInRooms: [1, 2, 2, 2], playerCnt: 8, number: 2},
-    {playerCntInRooms: [4, 3, 4, 4], playerCnt: 16, number: 4}
+    {playerCntInRooms: [0, 2, 3, 4], playerCnt: 10, number: 4},
+    {playerCntInRooms: [1, 3, 0, 2], playerCnt: 7, number: 2},
+    {playerCntInRooms: [2, 2, 3, 3], playerCnt: 11, number: 3},
+    {playerCntInRooms: [0, 0, 0, 0], playerCnt: 1, number: 1},
+    {playerCntInRooms: [2, 0, 4, 2], playerCnt: 9, number: 3},
+    {playerCntInRooms: [2, 1, 2, 2], playerCnt: 8, number: 2}
 ]
 
 const assets = {
@@ -691,7 +691,6 @@ const assets = {
         {name: 'cross', url: currentPrefix + "/cross.png"}
     ],
     sounds: [
-        {name: 'start', url: currentPrefix + "/start2.mp3"},
         {name: 'buzzer', url: currentPrefix + "/buzzer.mp3"},
         {name: 'shot', url: currentPrefix + "/shot.mp3"},
         {name: 'success', url: currentPrefix + "/success.mp3"},
@@ -906,6 +905,7 @@ function initGameState(level) {
         commandsLeft: 30,
         shotInEmptyRoom: Array(level.playerCntInRooms.length).fill(false),
         shotInEmptyOutside: false,
+        chosenRooms: [],
         otherError: false
     }
 }
@@ -951,10 +951,12 @@ function recGoToRoom(roomId) {
     assertRoomId(roomId)
     if ( gameState.outsidePlayers <= 0 ) {
         gameState.otherError = true
-        throw new ExitTestError("Nincs több játékos odakint, akit\nbe tudnál küldeni egy szobába!")
+        throw new ExitTestError("Nincs több játékos odakint, akit\nbe tudnál küldeni a(z) " + roomId +
+            ". szobába!")
     }
     --gameState.outsidePlayers
     ++gameState.roomPlayers[roomId]
+    gameState.chosenRooms.push(roomId)
 }
 
 async function goToRoom(roomId) {
@@ -1008,10 +1010,6 @@ let perfectRun = true
 for ( const level of levels ) {
     initLevel(level)
 
-    if ( firstLevel ) {
-        await cgt.tickSleep(0.1)
-        cgt.getSnd('start').play()
-    }
     await cgt.tickSleep(firstLevel ? 4000 : 2500)
 
     stopSpinning()
@@ -1035,39 +1033,34 @@ for ( const level of levels ) {
 
     await cgt.tickSleep(650)
 
-    let outsidePlayers = (gameState.outsidePlayers !== 0)
-    let wrongRooms = [], goodRoom = null
-    for ( const [rId, rP] of gameState.roomPlayers.entries() )
-        if ( rP !== level.number && rP !== 0 )
-            wrongRooms.push(rId)
-    if ( !outsidePlayers && !wrongRooms.length )
-        for ( const [rId, rCnt] of level.playerCntInRooms.entries() )
-            if ( rCnt !== level.number && gameState.roomPlayers[rId] === level.number ) {
-                goodRoom = rId
-                break
-            }
+    let fail = false
+    if ( gameState.outsidePlayers !== 0 ) {
+        showResult(null, false)
+        fail = true
+    }
+    for ( const chosenRoom of gameState.chosenRooms )
+        if ( gameState.roomPlayers[chosenRoom] === level.number )
+            showResult(chosenRoom, true)
+        else {
+            showResult(chosenRoom, false)
+            fail = true
+        }
 
-    if ( outsidePlayers || wrongRooms.length ) {
-        if ( outsidePlayers )
-            showResult(null, false)
-        for ( let wrongRoom of wrongRooms )
-            showResult(wrongRoom, false)
+    if ( fail ) {
         cgt.getSnd('buzzer').play()
         await cgt.sleep(1000)
         perfectRun = false
-    } else if ( goodRoom !== null ) {
-        showResult(goodRoom, true)
-        cgt.getSnd('success').play()
     } else
-        throw new Error("No goodRoom, no wrongRoom.")
+        cgt.getSnd('success').play()
 
     if ( gameState.otherError )
         perfectRun = false
 
-    if ( outsidePlayers )
+    if ( gameState.outsidePlayers !== 0 )
         await killOutsidePlayers()
-    for ( let wrongRoom of wrongRooms )
-        await killRoomPlayers(wrongRoom)
+    for ( const [rId, rCnt] of gameState.roomPlayers.entries() )
+        if ( rCnt !== 0 && rCnt !== level.number )
+            await killRoomPlayers(rId)
 
     await cgt.tickSleep(1000)
     firstLevel = false
