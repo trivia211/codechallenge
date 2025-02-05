@@ -50,7 +50,7 @@ else
 </pre>
     <p>Mindig 1 játékos a körhintán fog maradni, neki kell megmondanod, melyik szobába menjen. Kaptál egy új utasítást: <code>goToRoom(szobaszám)</code>. Pl. <code>goToRoom(2)</code> beküldi a játékost a 2. szobába. Néhány régi utasítást is használhatsz! Segíts neki megtalálni azt a szobát, ahol nem fog kiesni a játékból!</p>
     <?php echo Snippets::solutionForm('squidgame', 3); ?>
-    <p>Szuper! Ha kész vagy, meg is van a 3 csillagod. Mi lenne, ha azt mondanám, lehet megvan a koronád is? Nyisd meg <a href="https://aijs.io/editor?user=trivia21&project=Tintahalj%C3%A1t%C3%A9k-4">EZT</a> az új linket, és próbáld átmásolni ide is a kódodat. Ha működik, nincs más teendőd. Ha nem, megpróbálhatod kijavítani. A feladat ugyanaz.</p>
+    <p>Szuper! Ha kész vagy, meg is van a 3 csillagod. Mi lenne, ha azt mondanám, lehet megvan a koronád is? Nyisd meg <a href="https://aijs.io/editor?user=trivia21&project=Tintahalj%C3%A1t%C3%A9k-4">EZT</a> az új linket, és próbáld átmásolni ide is a kódodat. Ha működik, nincs más teendőd. Ha nem, megpróbálhatod kijavítani, és feltölteni a 3. feladathoz. Itt is ugyanaz a feladat.</p>
     <div class="alert alert-info overflow-x-hidden" role="alert">
         <h6 class="alert-heading">FONTOS!</h6>
         <p>A koronás feladatok szabadon választhatók, és kicsit nehezebbek. Nem baj ha nem sikerül, mert a korona nem ér több pontot, mint a három csillag. Csak egy kicsit szebben fénylik az eredménytáblázatban 😊.</p>
