@@ -1,22 +1,18 @@
-function ss() {
-
-
-// * * * 3. Megoldás * * *
-
-function solution() {
-
-}
-
-// * * *
-
-
-
-solution(); }
-
 // * CodeGuppyTools *
 
 const assetsPrefix = "https://prog.vikweb.hu/assets"
 const currentPrefix = assetsPrefix + "/2.squidgame"
+
+function sprite(img, x, y, scale) {
+    let result = new Sprite(img, x, y)
+    result.scale = scale * 2
+    result.collider = 'static'
+    return result
+}
+
+function println(text) {
+    print(text + "\n")
+}
 
 let cgt = {};
 (_this => {
@@ -24,30 +20,37 @@ let cgt = {};
     // returns a promise
     _this.loadAssets = function(assets) {
         return new Promise((resolve, reject) => {
+            disablePreloadSystem()
             if ( assets.images === undefined )
                 assets.images = []
             if ( assets.sounds === undefined )
                 assets.sounds = []
             let assetsLeft = assets.images.length + assets.sounds.length
             for ( let img of assets.images ) {
-                loadImage(img.url, function(imgObj) {
-                    imgs[img.name] = imgObj
-                    --assetsLeft
-                    if ( assetsLeft <= 0 )
-                        resolve()
-                }, function() {
-                    reject("Error loading image: " + img.name)
-                })
+                loadImage(img.url).then(
+                    (imgObj) => {
+                        imgs[img.name] = imgObj
+                        --assetsLeft
+                        if ( assetsLeft <= 0 )
+                            resolve()
+                    },
+                    () => {
+                        reject("Error loading image: " + img.name)
+                    }
+                )
             }
             for ( let sound of assets.sounds ) {
-                loadSound(sound.url, function(soundObj) {
-                    sounds[sound.name] = soundObj
-                    --assetsLeft
-                    if ( assetsLeft <= 0 )
-                        resolve()
-                }, function(err) {
-                    reject("Error loading sound: " + sound.name + ". " + err.message)
-                })
+                loadSound(sound.url).then(
+                    (soundObj) => {
+                        sounds[sound.name] = soundObj
+                        --assetsLeft
+                        if ( assetsLeft <= 0 )
+                            resolve()
+                    },
+                    (err) => {
+                        reject("Error loading sound: " + sound.name + ". " + err.message)
+                    }
+                )
             }
         })
     }
@@ -62,6 +65,60 @@ let cgt = {};
         if ( sounds[name] === undefined )
             throw "Sound doesn't exist: " + name
         return sounds[name]
+    }
+
+    _this.loadSolution = function() {
+        return new Promise((resolve, reject) => {
+            loadText('solution.js', (res) => {
+                if ( typeof res === 'string' && !res.startsWith('<!DOCTYPE html>') ) {
+                    solution = res
+                    resolve(res)
+                } else
+                    reject("Nem található a megoldás.")
+            })
+        })
+    }
+
+    _this.runSolution = function() {
+        if ( solutionScriptEl !== null )
+            solutionScriptEl.remove();
+        solutionScriptEl = document.createElement('div')
+        document.body.appendChild(solutionScriptEl)
+        let fragment = document.createRange().createContextualFragment(`<script>${solution}</script>`)
+        // exceptions thrown in the solution won't propogate here, they will be uncaught in the other
+        // script tag.
+        solutionScriptEl.append(fragment)
+    }
+
+    _this.sText = function(text, x, y, size, options = {}) {
+        textSize(1)
+        let result = new Sprite(x, y)
+        result.collider = 'static'
+        result.textSize = size
+        if ( options.color !== undefined )
+            result.textColor = options.color
+        if ( options.stroke !== undefined )
+            result.textStroke = options.stroke
+        result.text = text
+        result.layer = (options.layer || 1000)
+        result.fill = result.stroke = color(0, 0, 0, 0)
+        if ( options.group !== undefined ) {
+            if ( textGroups[options.group] !== undefined )
+                textGroups[options.group].push(result)
+            else
+                textGroups[options.group] = [result]
+        }
+        return result
+    }
+
+    _this.hideSTexts = function(...groups) {
+        for ( const group of groups ) {
+            if ( textGroups[group] === undefined )
+                continue
+            for ( let sText of textGroups[group] )
+                sText.remove()
+            delete textGroups[group]
+        }
     }
 
     _this.getTick = function(time = performance.now()) {
@@ -223,7 +280,7 @@ let cgt = {};
         for ( let i = 0; i < movedSprites.length; ++i ) {
             let ms = movedSprites[i]
             if ( ms.sprite === sprite ) {
-                ms.sprite.update = ms.update
+                ms.sprite.update = null
                 ms.sprite.x = ms.center.x
                 ms.sprite.y = ms.center.y
                 movedSprites.splice(i, 1)
@@ -248,13 +305,13 @@ let cgt = {};
         if ( tickData.speedBtns === null )
             return
         let sPaused = sprite(cgt.getImg("speedPaused"), 22 + xOffset, 22, 0.5),
-           sNormal = sprite(cgt.getImg("speedNormal"), 62 + xOffset, 22, 0.5),
-           sFast = sprite(cgt.getImg("speedFast"), 102 + xOffset, 22, 0.5),
-           sFaster = sprite(cgt.getImg("speedFaster"), 142 + xOffset, 22, 0.5);
-        sPaused.onMousePressed = function() { cgt.setGameSpeed(0); };
-        sNormal.onMousePressed = function() { cgt.setGameSpeed(1); };
-        sFast.onMousePressed = function() { cgt.setGameSpeed(3); };
-        sFaster.onMousePressed = function() { cgt.setGameSpeed(20); };
+            sNormal = sprite(cgt.getImg("speedNormal"), 62 + xOffset, 22, 0.5),
+            sFast = sprite(cgt.getImg("speedFast"), 102 + xOffset, 22, 0.5),
+            sFaster = sprite(cgt.getImg("speedFaster"), 142 + xOffset, 22, 0.5);
+        sPaused.onMousePresses = function() { cgt.setGameSpeed(0); };
+        sNormal.onMousePresses = function() { cgt.setGameSpeed(1); };
+        sFast.onMousePresses = function() { cgt.setGameSpeed(3); };
+        sFaster.onMousePresses = function() { cgt.setGameSpeed(20); };
         tickData.speedBtns = [sPaused, sNormal, sFast, sFaster];
     }
 
@@ -272,6 +329,7 @@ let cgt = {};
 
 
     let imgs = {}, sounds = {}
+    let textGroups = {}
     let tickData = {
         speed: 1.0,
         startTime: performance.now(),
@@ -279,13 +337,14 @@ let cgt = {};
         timers: [],
         speedBtns: null // false while loading
     }
-
     let movedSprites = []
+    let solution = null
+    let solutionScriptEl = null
 
     function updateTickTimerTimeout(timer, now = performance.now()) {
         if ( timer.timeoutId !== null )
             clearTimeout(timer.timeoutId)
-        const interval = _this.getTimeFromTick(timer.endTick) - now
+        let interval = _this.getTimeFromTick(timer.endTick) - now
         if ( interval < 0 )
             interval = 0
         if ( interval > 2147483647 ) {
@@ -304,7 +363,7 @@ let cgt = {};
     function setupMovedSpriteUpdate(movedSprite) {
         let sprt = movedSprite.sprite
         movedSprite.sprite.update = () => {
-            movedSprite.update.apply(sprt)
+            //movedSprite.update.apply(sprt)
             const now = _this.getTick()
 
             const move = movedSprite.move
@@ -363,6 +422,26 @@ let cgt = {};
         return deg
     }
 })(cgt)
+createCanvas()
+resizeCanvas(800, 600)
+
+let printPos = {x: 0, y: 0}
+window.print = function(txt) {
+    const printSize = 20
+    const lineGap = 1.2
+    textSize(printSize)
+    let width = textWidth(txt)
+    cgt.sText(txt, printPos.x + width / 2, printPos.y + printSize / 2 * lineGap, printSize)
+    if  ( txt.endsWith('\n') ) {
+        printPos.y += printSize * lineGap
+        printPos.x = 0
+    } else
+        printPos.x += width
+}
+
+function windowResized() {
+   resizeCanvas(800, 600)
+}
 
 // * Command Recorder *
 
@@ -598,12 +677,12 @@ const outsidePoss = [
 const outsideMiddlePos = {x: 180, y: 300}
 
 const levels = [
-    {playerCntInRooms: [3, 3, 1, 3], playerCnt: 12, number: 3},
-    {playerCntInRooms: [1, 2, 2, 4], playerCnt: 13, number: 2},
-    {playerCntInRooms: [3, 2, 3, 0], playerCnt: 12, number: 3},
-    {playerCntInRooms: [2, 2, 2, 2], playerCnt: 8, number: 2},
-    {playerCntInRooms: [1, 0, 3, 1], playerCnt: 15, number: 1},
-    {playerCntInRooms: [2, 4, 0, 4], playerCnt: 10, number: 4}
+    {playerCntInRooms: [1, 1, 0, 1], playerCnt: 4, number: 1},
+    {playerCntInRooms: [1, 2, 2, 2], playerCnt: 8, number: 2},
+    {playerCntInRooms: [3, 3, 3, 2], playerCnt: 12, number: 3},
+    {playerCntInRooms: [3, 2, 3, 3], playerCnt: 12, number: 3},
+    {playerCntInRooms: [1, 2, 2, 2], playerCnt: 8, number: 2},
+    {playerCntInRooms: [4, 3, 4, 4], playerCnt: 16, number: 4}
 ]
 
 const assets = {
@@ -614,7 +693,7 @@ const assets = {
         {name: 'cross', url: currentPrefix + "/cross.png"}
     ],
     sounds: [
-        {name: 'start', url: currentPrefix + "/start.mp3"},
+        {name: 'start', url: currentPrefix + "/start2.mp3"},
         {name: 'buzzer', url: currentPrefix + "/buzzer.mp3"},
         {name: 'shot', url: currentPrefix + "/shot.mp3"},
         {name: 'success', url: currentPrefix + "/success.mp3"},
@@ -633,14 +712,13 @@ let sOutsidePlayers = []
 let sResults = []
 
 function init() {
-    clear();
     showRoomIds()
     sBg = sprite(cgt.getImg('bg'), 400, 300, 0.5);
-    sBg.depth = -100;
+    sBg.layer = 0;
     cgt.showSpeedButtons();
     cgt.setGameSpeed(0.0);
     sGuard = sprite(cgt.getImg('guard'), 268, 535, 0.5)
-    sGuard.depth = -50
+    sGuard.layer = 30
 }
 
 function clearPlayers() {
@@ -657,15 +735,14 @@ function createRandomPlayersOnCircle(cnt) {
         const pos = rmRndArrayElem(poss)
         let playerImgId = Math.floor(Math.random() * PLAYERIMGCNT)
         let sPlayer = sprite(cgt.getImg('player' + playerImgId), pos.x, pos.y, 0.25)
-        sPlayer.depth = -30
+        sPlayer.layer = 50
         sPlayers.push(sPlayer)
         cgt.orbitSprite(sPlayer, {x: 410, y: 307}, {degPerTickS: 90})
     }
 }
 
 function initLevel(level) {
-    clear()
-    showRoomIds()
+    cgt.hideSTexts('number', 'message')
     clearPlayers()
     removeResults()
     createRandomPlayersOnCircle(level.playerCnt)
@@ -681,10 +758,9 @@ function stopSpinning() {
 }
 
 function showNumber(number, big) {
-    textSize(big ? 500 : 200)
-    fill('#3f48d2')
-    text(number, 400, big ? 350 : 325)
-    fill('white')
+    cgt.hideSTexts('number')
+    const size = (big ? 500 : 200)
+    cgt.sText(number, 400, big ? 350 : 325, size, {color: 'yellow', stroke: 'black', group: 'number'})
 }
 
 async function playersGoToRooms(level) {
@@ -700,14 +776,7 @@ async function playersGoToRooms(level) {
             promises.push(promise)
         }
     }
-    let rndOutsidePoss = [...outsidePoss]
-    while ( sRndPlayers.length ) {
-        const player = rmRndArrayElem(sRndPlayers)
-        const pos = rmRndArrayElem(rndOutsidePoss)
-        sOutsidePlayers.push(player)
-        const promise = cgt.moveSprite(player, pos, {speedPxPerTickS: 220})
-        promises.push(promise)
-    }
+    sOutsidePlayers = sRndPlayers
     await Promise.all(promises)
 }
 
@@ -720,32 +789,19 @@ async function killOutsidePlayers() {
             cgt.getSnd('shot').play()
             removePlayer(sOP)
         }
-    else {
+    else
         await cgt.moveSprite(sGuard, outsideMiddlePos, {durationTick: 500})
-        cgt.getSnd('shot').play()
-        await cgt.tickSleep(150)
-        cgt.getSnd('buzzer').play()
-        await cgt.tickSleep(1000)
-    }
 }
 
 async function killRoomPlayers(roomId) {
     recKillRoomPlayers(roomId)
-    if ( sRoomPlayers[roomId].length ) {
-        await cgt.moveSprite(sGuard, roomMiddlePoss[roomId], {durationTick: 500})
-        await cgt.tickSleep(150)
-        for ( let i = sRoomPlayers[roomId].length-1; i >= 0; --i ) {
-            cgt.getSnd('shot').play()
-            removePlayer(sRoomPlayers[roomId][i])
-            if ( i !== 0 )
-                await cgt.tickSleep(300)
-        }
-    } else {
-        await cgt.moveSprite(sGuard, roomMiddlePoss[roomId], {durationTick: 500})
+    await cgt.moveSprite(sGuard, roomMiddlePoss[roomId], {durationTick: 500})
+    await cgt.tickSleep(150)
+    for ( let i = sRoomPlayers[roomId].length-1; i >= 0; --i ) {
         cgt.getSnd('shot').play()
-        await cgt.tickSleep(150)
-        cgt.getSnd('buzzer').play()
-        await cgt.tickSleep(1000)
+        removePlayer(sRoomPlayers[roomId][i])
+        if ( i !== 0 )
+            await cgt.tickSleep(300)
     }
 }
 
@@ -754,12 +810,12 @@ function showResults(roomResults, outsideResult) {
         let result = roomResults[i]
         let middle = roomMiddlePoss[i]
         let sResult = sprite(cgt.getImg(result ? 'tick' : 'cross'), middle.x, middle.y, 0.35)
-        sResult.depth = -10
+        sResult.layer = 70
         sResults.push(sResult)
     }
     let sResult = sprite(cgt.getImg(outsideResult ? 'tick' : 'cross'),
         outsideMiddlePos.x, outsideMiddlePos.y, 0.35)
-    sResult.depth = -10
+    sResult.layer = 70
     sResults.push(sResult)
 }
 
@@ -785,15 +841,20 @@ function removeResults() {
     sResults = []
 }
 
+function handleRecordError(e) {
+    // this error will not be caught here, as it runs in a different script tag
+    if ( !(e instanceof ExitTestError) )
+        throw e
+}
+
 async function handleTestError(e) {
     if ( !(e instanceof ExitTestError) )
         throw e
-    textSize(40)
-    text(e.message, 0, 300, 800)
+    cgt.hideSTexts('message')
+    cgt.sText(e.message, 400, 300, 40, {group: 'message'})
     cgt.getSnd('buzzer').play()
     await cgt.sleep(1500)
-    clear()
-    showRoomIds()
+    cgt.hideSTexts('message')
     showNumber(gameState.number, false)
 }
 
@@ -806,13 +867,11 @@ function rmRndArrayElem(array) {
 
 function showRoomIds() {
     const pos = 50
-    textSize(25)
-    fill('grey')
-    text("0", pos, pos)
-    text("1", 800 - pos, pos)
-    text("2", pos, 600 - pos)
-    text("3", 800 - pos, 600 - pos)
-    fill('white')
+    const size = 25
+    cgt.sText("0", pos, pos, size)
+    cgt.sText("1", 800 - pos, pos, size)
+    cgt.sText("2", pos, 600 - pos, size)
+    cgt.sText("3", 800 - pos, 600 - pos, size)
 }
 
 let gameState = null
@@ -858,15 +917,11 @@ function number() {
 }
 
 function recKillOutsidePlayers() {
-    if ( gameState.outsidePlayers === 0 )
-        gameState.shotInEmptyOutside = true
     gameState.outsidePlayers = 0
 }
 
 function recKillRoomPlayers(roomId) {
     assertRoomId(roomId)
-    if ( gameState.roomPlayers[roomId] === 0 )
-        gameState.shotInEmptyRoom[roomId] = true
     gameState.roomPlayers[roomId] = 0
 }
 
@@ -879,34 +934,32 @@ function getRoomResult(level, roomId) {
         return gameState.roomPlayers[roomId] === 0
 }
 
-clear()
-showRoomIds()
-fill('white')
+fill('black')
 textSize(30);
 textAlign(CENTER, CENTER)
 text("Betöltés...", 400, 300)
 
 try {
-    await cgt.loadAssets(assets);
+    await cgt.loadAssets(assets)
+    await cgt.loadSolution()
 } catch ( e ) {
-    clear()
-    showRoomIds()
+    background('white')
     fill('red')
     textSize(14)
-    text("Hiba történt a betöltés során: " + e, 0, 300, 800)
+    text("Hiba történt a betöltés során: " + e, 400, 300, 800)
     return
 }
 
 init()
-cmdRecorder.setExceptionHandler(() => {}, handleTestError)
+cmdRecorder.setExceptionHandler(handleRecordError, handleTestError)
 cmdRecorder.setBeforeCommand(assertNotTooManyCommands)
 cmdRecorder.addCommand('outsideCnt', outsideCnt, outsideCnt)
 cmdRecorder.addCommand('roomCnt', roomCnt, roomCnt)
 cmdRecorder.addCommand('number', number, number)
 cmdRecorder.addCommand('killOutside', recKillOutsidePlayers, killOutsidePlayers)
 cmdRecorder.addCommand('killRoom', recKillRoomPlayers, killRoomPlayers)
-cmdRecorder.addCommand('print', null, print, true)
-cmdRecorder.addCommand('println', null, println, true)
+cmdRecorder.addCommand('print', null, print)
+cmdRecorder.addCommand('println', null, println)
 
 let perfectRun = true
 
@@ -924,8 +977,6 @@ for ( const level of levels ) {
     showNumber(level.number, true)
 
     await cgt.tickSleep(1200)
-    clear()
-    showRoomIds()
     showNumber(level.number, false)
 
     await playersGoToRooms(level)
@@ -933,7 +984,7 @@ for ( const level of levels ) {
     await cgt.tickSleep(500)
 
     initGameState(level)
-    cmdRecorder.record(ss)
+    await cmdRecorder.record(cgt.runSolution)
     initGameState(level)
     await cmdRecorder.replay()
 
@@ -960,13 +1011,18 @@ for ( const level of levels ) {
     firstLevel = false
 }
 
-textSize(40)
 if ( perfectRun ) {
     cgt.getSnd('end').play()
-    fill('blue')
-    text("Játék letudva! :) Gratulálok!", 0, 300, 800)
-    fill('white')
+    cgt.sText("Játék letudva! :) Gratulálok!", 400, 300, 50, {color: 'blue', group: 'end'})
 } else
-    text("VÉGE. Még pár dolgon tudsz javítani.", 0, 300, 800)
+    cgt.sText("VÉGE. Még pár dolgon tudsz javítani.", 400, 300, 40, {group: 'end'})
 
 })()
+
+function update() {
+    if ( !mouse.presses('left') )
+        return
+    for ( let s of allSprites )
+        if ( s.onMousePresses !== undefined && s.mouse.hovering() )
+            s.onMousePresses()
+}
