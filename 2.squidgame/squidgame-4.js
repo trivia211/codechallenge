@@ -911,6 +911,8 @@ function initGameState(level) {
 }
 
 function assertRoomId(roomId) {
+    if ( typeof roomId === 'string' && /^([1-9][0-9]*|0)$/.test(roomId) )
+        roomId = Number(roomId)
     if ( !Number.isInteger(roomId) || roomId < 0 || roomId >= gameState.roomPlayers.length ) {
         gameState.otherError = true
         throw new ExitTestError("Érvénytelen szoba sorszám: " + roomId)

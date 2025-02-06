@@ -40,21 +40,24 @@ require_once ROOT . "/private/snippets.php";
         <p>A feladatod ugyanaz, de <b>HA</b> nincs senki odakint, akkor odakint ne lövöldözz, a kinti játékosokat ne állítsd ki! Figyelj rá, hogy a második feladat linkjét nyisd meg!</p>
         <?php echo Snippets::solutionForm('squidgame', 2); ?>
         <p><b class="fs-5">3. </b>A harmadik feladatot <a href="https://aijs.io/editor?user=trivia21&project=Tintahalj%C3%A1t%C3%A9k-3">INNEN</a> tudod megnyitni. Bal oldalon a fájlok közül a <code>solution.js</code> fájlt kell megnyitni, abba írni a megoldást.</p>
-        <p>Ezúttal nem az őrnek, hanem az egyik játékosnak kell segítened, aki nem tudja eldönteni, melyik szobába meneküljön! Ehhez a négy alapművelet egyikét kell használnod: összeadás, kivonás, szorzás, osztás. A JavaScriptben ezek így néznek ki: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>. Figyelj arra, hogy a szorzás egy csillag, pl. <code>3 * 2</code> = 6. Nézzünk egy példát. Bekérünk két számot, és leellenőrizzük, hogy a felhasználó tud-e kettővel szorozni 😀.</p>
-<pre>let x = Number(prompt("Írj be egy számot!"))
-let y = Number(prompt("Írd be az előző szám KÉTSZERESÉT!"))
-if ( y === x * 2 )
-    println("Sikerült! Tudsz szorozni!")
-else
-    println("Menj vissza általánosba!!")
-</pre>
-    <p>Mindig 1 játékos a körhintán fog maradni, neki kell megmondanod, melyik szobába menjen. Kaptál egy új utasítást: <code>goToRoom(szobaszám)</code>. Pl. <code>goToRoom(2)</code> beküldi a játékost a 2. szobába. Néhány régi utasítást is használhatsz! Segíts neki megtalálni azt a szobát, ahol nem fog kiesni a játékból!</p>
-    <?php echo Snippets::solutionForm('squidgame', 3); ?>
-    <p>Szuper! Ha kész vagy, meg is van a 3 csillagod. Mi lenne, ha azt mondanám, lehet megvan a koronád is? Nyisd meg <a href="https://aijs.io/editor?user=trivia21&project=Tintahalj%C3%A1t%C3%A9k-4">EZT</a> az új linket, és próbáld átmásolni ide is a kódodat. Ha működik, nincs más teendőd. Ha nem, megpróbálhatod kijavítani, és feltölteni a 3. feladathoz. Itt is ugyanaz a feladat.</p>
-    <div class="alert alert-info overflow-x-hidden" role="alert">
-        <h6 class="alert-heading">FONTOS!</h6>
-        <p>A koronás feladatok szabadon választhatók, és kicsit nehezebbek. Nem baj ha nem sikerül, mert a korona nem ér több pontot, mint a három csillag. Csak egy kicsit szebben fénylik az eredménytáblázatban 😊.</p>
-    </div>
+        <p>Ezúttal nem az őrnek, hanem az egyik játékosnak kell segítened, aki nem tudja eldönteni, melyik szobába meneküljön! Mindig 1 játékos a körhintán fog maradni, neki kell megmondanod, melyik szobába menjen. Kaptál egy új utasítást: <code>goToRoom(szobaszám)</code>. Pl. <code>goToRoom(2)</code> beküldi a játékost a 2. szobába. Néhány régi utasítást is használhatsz!</p>
+        <p>A négy alapművelet egyikét kell használnod: összeadás, kivonás, szorzás, osztás. A JavaScriptben ezek így néznek ki: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>. Figyelj arra, hogy a szorzás egy csillag, pl. <code>3 * 2</code> = 6. Műveleteket végezhetsz bármilyen dologgal, ami szám. Néhány értelmetlen példa: <code>number() / 2</code> vagy <code>roomCnt(3) - outsideCnt() + 1</code>.</p>
+        <p>Indítsd el a játékot, nézd meg szegény középen maradt embert. Te hogyan számolod ki fejben, hogy melyik szobába kell mennie? Egy kis segítség: írjuk ki mind a négy szobához, hányan lennének benne, ha oda menne az ember:</p>
+<pre>print("Ha az 1. szobába mennék, ennyien lennének ott: ")
+println(<em>írd ide, hogyan kell kiszámolni! idézőjel nem kell számokhoz!</em>)
+print("Ha az 2. szobába mennék, ennyien lennének ott: ")
+println(<em>???</em>)
+<em>satöbbi...</em></pre>
+        <p>Ha sikerült, használd fel a számolást a megoldáshoz. Az <code>if</code> utasításból ne felejtsd ki az összehasonlítást (<code>===</code> vagy <code>!==</code>)!</p>
+<pre>if ( <em>ha az 1. szobába mennék, pont jó lenne a létszám (ezt kódold le!)</em> )
+    goToRoom(1)
+<em>satöbbi...</em></pre>
+        <?php echo Snippets::solutionForm('squidgame', 3); ?>
+        <p>Szuper! Ha kész vagy, meg is van a 3 csillagod. Mi lenne, ha azt mondanám, lehet megvan a koronád is? Nyisd meg <a href="https://aijs.io/editor?user=trivia21&project=Tintahalj%C3%A1t%C3%A9k-4">EZT</a> az új linket, és próbáld átmásolni ide is a kódodat. Ha működik, nincs más teendőd. Ha nem, megpróbálhatod kijavítani, és feltölteni a 3. feladathoz. Itt is ugyanaz a feladat.</p>
+        <div class="alert alert-info overflow-x-hidden" role="alert">
+            <h6 class="alert-heading">FONTOS!</h6>
+            <p>A koronás feladatok szabadon választhatók, és kicsit nehezebbek. Nem baj ha nem sikerül, mert a korona nem ér több pontot, mint a három csillag. Csak egy kicsit szebben fénylik az eredménytáblázatban 😊.</p>
+        </div>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
     <script src="/js/challengepage.js"></script>
