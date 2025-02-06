@@ -48,8 +48,8 @@ println(<em>írd ide, hogyan kell kiszámolni! idézőjel nem kell számokhoz!</
 print("Ha az 1. szobába mennék, ennyien lennének ott: ")
 println(<em>???</em>)
 <em>satöbbi...</em></pre>
-        <p>Ha sikerült, használd fel a számolást a megoldáshoz. Az <code>if</code> utasításból ne felejtsd ki az összehasonlítást (<code>===</code> vagy <code>!==</code>)!</p>
-<pre>if ( <em>ha a 0. szobába mennék, pont jó lenne a létszám (ezt kódold le!)</em> )
+        <p>Ha sikerült, használd a számolást a megoldáshoz egy ilyen <code>if</code> utasításban (a magyar szövegeket természetesen cseréld le):</p>
+<pre>if ( <em>ha a 0. szobába mennék,</em> === <em>pont jó lenne a létszám</em> )
     goToRoom(0)
 <em>satöbbi...</em></pre>
         <?php echo Snippets::solutionForm('squidgame', 3); ?>
