@@ -24,7 +24,7 @@ abstract class Snippets {
                 $iconPath = "/img/icon.png";
         } else
             $iconPath = "/img/icon.png";
-        $result = '<nav class="navbar navbar-expand-sm sticky-top mb-2"><div class="container ' .
+        $result = '<nav class="navbar navbar-expand-md sticky-top mb-2"><div class="container ' .
                 'justify-content-start">' .
             '<a class="navbar-brand pt-0 pb-0 fs-3" href="/">' .
                 '<img src="' . htmlspecialchars($iconPath) . '" id="icon" alt="KódKihívás" class="me-2 rounded">' .

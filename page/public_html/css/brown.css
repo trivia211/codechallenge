@@ -1,0 +1,9 @@
+#snow-container {
+    position: absolute;
+    inset: 0 0 0 0;
+    z-index: -1;
+}
+
+.main-container {
+    position: relative;
+}

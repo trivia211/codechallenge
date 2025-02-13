@@ -1,0 +1,7 @@
+-- * envchange1 *
+cd /path/to/public_html/dist
+npm install
+- Hozzáadni a site conf fájlhoz a <DirectoryMatch "^/path/to/public_html/dist/.*/dist"> után:
+<Directory /path/to/public_html/dist/node_modules/q5>
+    Require all granted
+</Directory>

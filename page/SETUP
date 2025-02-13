@@ -21,6 +21,9 @@ npm install [--omit=dev] # omit: prod serveren
 <DirectoryMatch "^/path/to/public_html/dist/.*/dist">
     Require all granted
 </DirectoryMatch>
+<Directory /path/to/public_html/dist/node_modules/q5>
+    Require all granted
+</Directory>
 <Directory /path/to/public_html/dist>
     Require all denied
 </Directory>
