@@ -7,7 +7,7 @@ $(document).ready(function() {
 
     function setupAnimation() {
         flakes = []
-        flakeProb = Math.min(size.w / 8000, 1)
+        flakeProb = Math.min(size.w / 9500, 1)
     }
 
     function moveFlakes() {

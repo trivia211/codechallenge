@@ -71,6 +71,25 @@ println(szam)
 print("Ezt a szöveget írtad be: ")
 println(szoveg)</pre>
         <p>Amikor változók nevét írjuk le, sosem rakunk köré idézőjelet! Próbáld ki, mi történne, ha <code>szoveg</code> helyett <code>"szoveg"</code>-et írnál!</p>
+        <h3>Műveletek <span class="badge text-bg-warning">Új</span></h3>
+        <p>Ki gondolta volna, a számítógép számolni is tud! A négy alapműveletet, összeadást, kivonást, szorzást, osztást sorban így jelöljük: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>. A szorzás egy csillag!</p>
+        <p>Például számolhatunk <code>if</code> utasításban. Bekérünk két számot, megnézzük, tud-e kettővel szorozni a felhasználó:</p>
+<pre><span class="text-body-tertiary">let x = Number(prompt("Írj be egy számot!"))
+let y = Number(prompt("Most írd be a kétszeresét!"))</span>
+if ( x * 2 === y ) {
+    println("Sikerült! Tudsz számolni!")
+} else {
+    println("Nem tudsz számolni :(")
+}</pre>
+        <p>Változóknak is adhatunk kiszámolt értéket. <code>x</code> először 6 osztva 2 = 3 lesz. Utána a saját érékéből kivonunk egyet, így a végén 3 - 1 = 2 lesz az <code>x</code>.</p>
+<pre>let x = 6 / 2
+x = x - 1
+<span class="text-body-tertiary">println(x)</span>
+</pre>
+        <div class="alert alert-info" role="alert">
+            <h6 class="alert-heading">Pro tipp</h6>
+            <p>Lehet négyzetre emelni: <code>5 ** 2</code>, gyököt vonni: <code>Math.sqrt(25)</code>, sőt még <a href="https://www.w3schools.com/js/js_math.asp" target="_blank">komolyabb műveleteket</a> is végezhetünk a JavaScriptben!</p>
+        </div>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
     <script src="/js/knowledgebase.js"></script>

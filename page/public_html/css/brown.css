@@ -7,3 +7,12 @@
 .main-container {
     position: relative;
 }
+
+.brown {
+    color: #943126 ;
+}
+
+.red {
+    color: red;
+    font-weight: bold;
+}
