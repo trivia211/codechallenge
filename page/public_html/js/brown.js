@@ -19,7 +19,8 @@ $(document).ready(function() {
                 flakes[i].y += Math.random() * turb * 2 - turb
             }
             flakes[i].y -= speed
-            if ( flakes[i].y < -1 || flakes[i].x <= -10 || flakes[i].x >= size.w + 10 ) {
+            if ( flakes[i].y < -1 || flakes[i].y > size.h + 5 ||
+                    flakes[i].x <= -10 || flakes[i].x >= size.w + 10 ) {
                 flakes.splice(i, 1)
                 continue
             }
