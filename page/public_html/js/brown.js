@@ -6,7 +6,7 @@ $(document).ready(function() {
     let size
 
     function setupAnimation() {
-        flakes = []
+        //flakes = []
         flakeProb = Math.min(size.w / 9500, 1)
     }
 
@@ -19,7 +19,7 @@ $(document).ready(function() {
                 flakes[i].y += Math.random() * turb * 2 - turb
             }
             flakes[i].y -= speed
-            if ( flakes[i].y < 0 ) {
+            if ( flakes[i].y < -1 || flakes[i].x <= -10 || flakes[i].x >= size.w + 10 ) {
                 flakes.splice(i, 1)
                 continue
             }
@@ -70,8 +70,6 @@ $(document).ready(function() {
     }
 
     snowQ.draw = function() {
-        if ( resizeTimer !== null )
-            return;
         snowQ.clear()
         moveFlakes()
         spawnFlakes()

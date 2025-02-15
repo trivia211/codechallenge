@@ -13,7 +13,7 @@ require_once ROOT . "/private/snippets.php";
 <body>
     <?php echo Snippets::navbar('challenge'); ?>
     <div class="container"><div class="row"><div class="col main-container">
-        <h1>2. <span class="brown">Brown</span> mozgás <small class="text-body-secondary">- majd, ha piros hó esik felfelé!</small></h1>
+        <h1>3. <span class="brown">Brown</span> mozgás <small class="text-body-secondary">- majd, ha piros hó esik felfelé!</small></h1>
         <div id="alert" class="d-none mb-3"></div>
         <p>Ez a feladat kicsit más, mint az előzők. Különféle tárgyakat fogunk mozgatni a képernyőn, a végén akár a hó is eleredhet! Vágjunk is bele!</p>
         <p>A feladat <a href="https://aijs.io/editor?user=trivia21&project=Brown-1" target="_blank">INNEN</a> nyitható meg. Hogy jobb javaslatokat adjon a kódszerkesztő, és ne húzza alá a <code>sprite</code> utasítást, a következőket javaslom:</p>
@@ -78,7 +78,7 @@ function update() {
         <div id="snow-container"></div>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
-    <script src="/dist/node_modules/q5/q5.js"></script>
+    <script src="/dist/node_modules/q5/q5.min.js"></script>
     <script src="/js/challengepage.js"></script>
     <script src="/js/brown.js"></script>
 </body>
