@@ -7,18 +7,19 @@ $(document).ready(function() {
 
     function setupAnimation() {
         //flakes = []
-        flakeProb = Math.min(size.w / 9500, 1)
+        flakeProb = Math.min(size.w / 8000, 1)
     }
 
     function moveFlakes() {
         const turb = 1.5
         const speed = 1.2
+        const fpsR = 30 / snowQ.frameRate()
         for ( let i = flakes.length - 1; i >= 0; --i ) {
             if ( snowQ.frameCount % 2 === 0 ) {
-                flakes[i].x += Math.random() * turb * 2 - turb
-                flakes[i].y += Math.random() * turb * 2 - turb
+                flakes[i].x += (Math.random() * turb * 2 - turb) * fpsR
+                flakes[i].y += (Math.random() * turb * 2 - turb) * fpsR
             }
-            flakes[i].y -= speed
+            flakes[i].y -= speed * fpsR
             if ( flakes[i].y < -1 || flakes[i].y > size.h + 5 ||
                     flakes[i].x <= -10 || flakes[i].x >= size.w + 10 ) {
                 flakes.splice(i, 1)
@@ -27,12 +28,17 @@ $(document).ready(function() {
         }
     }
 
+    let spawnCounter = 0.0
+
     function spawnFlakes() {
-        if ( Math.random() < flakeProb )
+        spawnCounter += Math.random() * flakeProb * 30 / snowQ.frameRate()
+        while ( spawnCounter >= 1.0 ) {
             flakes.push({
                 x: Math.random() * size.w,
                 y: size.h
             })
+            spawnCounter -= 1.0
+        }
     }
 
     function drawFlakes() {
