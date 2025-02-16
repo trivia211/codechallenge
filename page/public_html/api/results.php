@@ -32,7 +32,7 @@ class ListServer extends ActionServer {
    }
 
    private function getChallenges() {
-      $s = dbh()->prepare("SELECT id, name, title FROM challenges ORDER BY id");
+      $s = dbh()->prepare("SELECT id, name, title FROM challenges ORDER BY id DESC");
       $s->execute();
       return $s->fetchAll(PDO::FETCH_ASSOC);
    }

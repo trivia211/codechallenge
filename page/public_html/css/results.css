@@ -1,5 +1,6 @@
 .results-table td {
     width: 8em;
+    min-width: 8em;
     height: 8em;
     text-align: center;
     background-size: cover;
