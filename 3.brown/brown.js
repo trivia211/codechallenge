@@ -486,10 +486,10 @@ cgt.runSolution()
 
 })()
 
-function sprite(imgName, x, y, color = 'gray', scale = 1.0) {
+function sprite(imgName, x, y, tcolor = 'gray', scale = 1.0) {
     const img = cgt.getImg(imgName)
     let result = new Sprite(img, x, y)
-    result.tint = color
+    result.tint = color(tcolor)
     result.scale = scale * 2 * 0.65
     result.collider = 'none'
     return result
