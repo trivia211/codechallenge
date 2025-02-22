@@ -16,7 +16,7 @@ require_once ROOT . "/private/snippets.php";
         <h1>3. <span class="brown">Brown</span> mozgás <small class="text-body-secondary">- majd, ha piros hó esik felfelé!</small></h1>
         <div id="alert" class="d-none mb-3"></div>
         <p>Ez a feladat kicsit más, mint az előzők. Különféle tárgyakat fogunk mozgatni a képernyőn, a végén akár a hó is eleredhet! Vágjunk is bele!</p>
-        <p>A feladat <a href="https://aijs.io/editor?user=trivia21&project=Brown-1" target="_blank">INNEN</a> nyitható meg. Hogy jobb javaslatokat adjon a kódszerkesztő, és ne húzza alá a <code>sprite</code> utasítást, a következőket javaslom:</p>
+        <p>A feladat <a href="https://aijs.io/editor?user=trivia21&project=Brown_mozg%C3%A1s" target="_blank">INNEN</a> nyitható meg. Hogy jobb javaslatokat adjon a kódszerkesztő, és ne húzza alá a <code>sprite</code> utasítást, a következőket javaslom:</p>
         <ol>
             <li>Zárjátok be az <code>index.html</code>-t.</li>
             <li>Nyissátok meg a <code>challenge.js</code>-t. Ebbe <b>ne</b> írjatok bele.</li>
