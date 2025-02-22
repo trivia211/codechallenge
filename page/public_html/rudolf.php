@@ -28,27 +28,34 @@ require_once ROOT . "/private/snippets.php";
         <pre>println("Helló, fingom sincs, mit kell ide írni!")</pre>
         <p><img src="/img/rudolf/3.jpg" class="img-fluid"></p>
         <p>Futtasd végig a játékot, akár gyorsítva! Na! Itt már történt valami! Hatszor kiírta egymás alá a szöveget. Sajnos a pontszám még mindig 0. Két Rudolfföldi utasasítást tanítok most meg neked, amit felhasználhastsz a megoldáshoz! Az egyik a <code>slot(X)</code>, ahol X a slot száma (0, 1, 2 vagy 3). Ez a függvény megmondja, mi van a slotban: bomba (B) vagy ajándék (G). Cseréljük le az előző utasítást most erre:</p>
-        <pre>function solution() {
+        <pre>function solution()
+{
     println(slot(0))
 }</pre>
         <p>Ha lefuttatod a játékot, most minden pálya elején kiírja új sorba, hogy a 0. sloton B vagy G van! Ez működik a többi slotra is, nyugodtan próbáld meg! Sőt, mi történik, ha ezt másolod be?</p>
-        <pre>function solution() {
-    if ( slot(1) === "B" ) {
+        <pre>function solution()
+{
+    if ( slot(1) === "B" )
+    {
         println("Az 1. helyen bomba van! ÁÁÁ")
-    } else {
+    }
+    else
+    {
         println("Az 1. helyen ajándék van! YESS!")
     }
 }</pre>
         <p>Ha az 1. sloton "B"omba va, kiírja, hogy bomba ÁÁÁ, különben, hogy ajándék YESS.</p>
         <p>A második utasítás, amit ismerned kell: <code>take(X)</code>. Ez bizony elveszi azt a dolgot, ami az X. sloton van, akármi is legyen. Próbáld meg, hogy csak ennyit írsz be a solution-be:</p>
-        <pre>function solution() {
+        <pre>function solution()
+{
     take(1)
 }</pre>
         <p>Végre csinál valamit a robot! Mind a hat pályán elveszi, ami az 1. sloton van. Néha ajándék, néha bomba...</p>
         <p><b class="fs-5">1. </b>Az az igazság, hogy most már meg is tudod oldani a feladatot: vedd el az összes ajándékot az összes pályáról! Sose nyúlj bombához! Cél: <b>28</b> pont! Tipp: akár több if utasítást is használhatsz. Nem biztos, hogy az <code>else</code> ágat használni kell, azt ki is hagyhatod! Ha nem sikerül elérni a pontszámot, akkor is mindig töltsd fel a legjobb próbálkozásodat! Ha később találsz jobb megoldást, töltsd fel azt is!</p>
         <?php echo Snippets::solutionForm('rudolf', 1); ?>
         <p>Ha kész vagy, olvass tovább! Megtanulunk egy új utasítást, amivel Rudolf még több pontot tud szerezni Mikinél! Ez a <code>defuse(X)</code> utasítás. Aki tud angolul, tudja, ez azt jelenti: hatástalanít. Bizony, további pontokért a kis robot a bombákat is hatástalanítani tudja! Van azonban egy apróság: mi történik, ha véletlenül nem egy bombát, hanem egy ajándékot szeretnél hatástalanítani? Nyilvánvaló: hát <span class="fw-bold text-danger">FELROBBAN</span>! Próbáld is ki ezzel az egyszerű utasítással:</p>
-        <pre>function solution() {
+        <pre>function solution()
+{
     take(1)
     defuse(2)
 }</pre>

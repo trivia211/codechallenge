@@ -29,7 +29,8 @@ require_once ROOT . "/private/snippets.php";
         <p><code>killOutside()</code>: eliminálja az összes játékost, akik nincs bent egy szobában. (<i>Outside</i> = odakint.)</p>
         <p><code>killRoom(szobaszám)</code>: eliminálja az összes játékost a <code>szobaszám</code> szobában. Pl. itt a képen a 2. szobában csak egy ember van, így lehet őt kiejteni a játékból: <code>killRoom(2)</code>.</p>
         <p>Itt is 6 pálya van, mint a Rudolfos kihívásban. Például, minden pályán írjuk ki, hányan vannak a 3. szobában. Próbáld végigfuttatni a játékot ezzel a kóddal:</p>
-<pre>function solution() {
+<pre>function solution()
+{
     print("A 3. szobában ennyi játékos van: ")
     println(roomCnt(3))
 }</pre>

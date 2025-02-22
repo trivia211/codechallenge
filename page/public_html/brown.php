@@ -40,14 +40,16 @@ require_once ROOT . "/private/snippets.php";
 <pre>background("Cornsilk")
 let hopihe = sprite("snow", 400, 300, "orange")
 
-function update() {
+function update()
+{
     hopihe.x = hopihe.x + 1
 }</pre>
         <p>Akár több sprite-om is lehet, és másfelé is mozgathatom őket, használhatom az <code>y</code> koordinátát is!</p>
 <pre>let hopihe = sprite("snow", 400, 300, "orange")
 let ho2 = sprite("snow", 400, 100, "blue")
 
-function update() {
+function update()
+{
     hopihe.x = hopihe.x + 1
     ho2.y = ho2.y + 1
 }</pre>
@@ -64,7 +66,8 @@ function update() {
         <p>Most pedig csináljuk meg, hogy ne 1-el, hanem véletlen számmal változzon a sprite két koordinátája!</p>
 <pre>let ho = sprite("snow", 0, 0, "orange")
 
-function update() {
+function update()
+{
     ho.x = ho.x + random(0, 2)
     ho.y = ho.y + random(0, 2)
 }</pre>

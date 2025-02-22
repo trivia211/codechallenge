@@ -18,24 +18,33 @@ require_once ROOT . "/private/snippets.php";
         <p>Itt megtalálhatsz mindent, amiről már tanultunk, sok példakóddal.</p>
         <h3>if utasítás</h3>
         <p>Ha a <code>slot(1)</code> értéke pont a <code>"B"</code> szöveg, kiírjuk, hogy BUMM:</p>
-<pre>if ( slot(1) === "B" ) {
+<pre>if ( slot(1) === "B" )
+{
     println("BUMM")
 }</pre>
         <p>Ha nem teljesül a feltétel, csinálhatunk valami mást a különben = <code>else</code> utasítással. Ha a <code>nev</code> változóban a <code>"Domi"</code> szöveg van, kiírjuk, hogy Helló!, különben, hogy Domit kérem!:</p>
 <pre><span class="text-body-tertiary">let nev = "Domi"</span>
-if ( nev === "Domi") {
+if ( nev === "Domi")
+{
     println("Helló!")
-} else {
+}
+else
+{
     println("Domit kérem!")
 }</pre>
         <p>Sőt, ha nem egy, és nem két lehetőség van, további <code>else if</code> utasításokat használhatunk. Pl. bekéri a program, hogy hanyas a matek témazáród, és 5-ös, 4-esnél megdicsér, különben (3, 2, 1) nem:</p>
 <pre><span class="text-body-tertiary">let jegy = Number(prompt("Hanyas lett a matek témazáród?"))</span>
-if ( jegy === 5 ) {
+if ( jegy === 5 )
+{
     println("WOW el se hiszem!")
     println("😀")
-} else if ( jegy === 4 ) {
+}
+else if ( jegy === 4 )
+{
     println("Szép munka!")
-} else {
+}
+else
+{
     println("Hát, lehetne jobb!")
 }</pre>
         <p>Figyeld meg, egy blokkban több utasítás is lehet. Amikor 5-öst kaptál, két sort is kiír.</p>
@@ -52,12 +61,14 @@ else
         <p>A <code>===</code> operátorral tudod ellenőrizni, hogy két érték ugyanaz-e. Pl. <code>nev === "Domi"</code> vagy <code>jegy === 3</code>. Figyeld meg, hogy ha szöveggel hasonlítasz össze, mindig ki kell rakni az idézőjeleket, ha számmal, akkor nem. Egy változó neve köré (itt <code>nev</code> és <code>jegy</code>) sosem kell idézőjel! Az összehasonlításokat pl. az <code>if</code> utasításban használhatod.</p>
         <p>Azt is leellenőrizheted, hogy két dolog nem egyenlő. Ehhez a <code>!==</code> operátor kell. Pl. ha nem jó jelszót írsz be, felrobbanunk:</p>
 <pre><span class="text-body-tertiary">let jelszo = prompt("Mi a jelszó?")</span>
-if ( jelszo !== "roblox" ) {
+if ( jelszo !== "roblox" )
+{
     println("BUMMM")
 }</pre>
         <p>Van még néhány összehasonlítás: kisebb, nagyobb, kisebb vagy egyenlő, nagyobb vagy egyenlő: <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>. Pl. ha 2-est, vagy rosszabb jegyet kaptál, kapsz 9999 nap szobafogságot:</p>
     <pre><span class="text-body-tertiary">let jegy = Number(prompt("Hanyast kaptál?"))</span>
-if ( jegy <= 2 ) {
+if ( jegy <= 2 )
+{
     println("9999 nap szobafogság! Viszlát!")
 }</pre>
         <h3>Változók</h3>
@@ -76,9 +87,12 @@ println(szoveg)</pre>
         <p>Például számolhatunk <code>if</code> utasításban. Bekérünk két számot, megnézzük, tud-e kettővel szorozni a felhasználó:</p>
 <pre><span class="text-body-tertiary">let x = Number(prompt("Írj be egy számot!"))
 let y = Number(prompt("Most írd be a kétszeresét!"))</span>
-if ( x * 2 === y ) {
+if ( x * 2 === y )
+{
     println("Sikerült! Tudsz számolni!")
-} else {
+}
+else
+{
     println("Nem tudsz számolni :(")
 }</pre>
         <p>Változóknak is adhatunk kiszámolt értéket. <code>x</code> először 6 osztva 2 = 3 lesz. Utána a saját érékéből kivonunk egyet, így a végén 3 - 1 = 2 lesz az <code>x</code>.</p>
