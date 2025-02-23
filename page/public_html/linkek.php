@@ -32,6 +32,7 @@ require_once ROOT . "/private/snippets.php";
                     <li><a href="https://drive.google.com/file/d/1v1Iq8ZfW5uT6Q8XJpSWcdJeJRxxd848v/view?usp=sharing" target="_blank">VIDEÓ</a></li>
                 </ul>
             </li>
+            <li><a href="https://aijs.io/editor?user=trivia21&project=Hunt" target="_blank">Gyakorlás: Vadászat</a></li>
         </ul>
     </div></div></div>
     <?php echo Snippets::foot(); ?>

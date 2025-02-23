@@ -476,13 +476,6 @@ function rmRndArrayElem(array) {
     return array.splice(id, 1)[0]
 }
 
-function showNumbers() {
-    let no = 0
-    for ( let y = 90; y < 600; y += 100 )
-        for ( let x = 90; x < 800; x += 100 )
-            cgt.sText(no++, x, y, 10, {group: 'numbers', color: 'grey'})
-}
-
 let staticTrees = []
 for ( let i = 0; i < 48; ++i )
     staticTrees.push("tree" + randomInt(1, TREECOUNT))
@@ -499,6 +492,16 @@ function assertPlaceValue(value) {
     const values = [null, 'tree', 'hunter', 'rabbit', 'diamond', 'pirate']
     if ( !values.includes(value) )
         throw new Error("Nem létező place érték: " + val)
+}
+
+_this.showNumbers = function(show = true) {
+    cgt.hideSTexts('numbers')
+    if ( !show )
+        return
+    let no = 0
+    for ( let y = 90; y < 600; y += 100 )
+        for ( let x = 90; x < 800; x += 100 )
+            cgt.sText(no++, x, y, 10, {group: 'numbers', color: 'grey'})
 }
 
 _this.place = function(id) {
@@ -537,7 +540,7 @@ try {
 }
 
 background('white')
-showNumbers()
+_this.showNumbers()
 
 cgt.runSolution()
 
@@ -545,6 +548,10 @@ cgt.runSolution()
 
 function draw() {
     background('white')
+}
+
+function showNumbers(show = true) {
+    hunt.showNumbers(show)
 }
 
 function place(id) {
