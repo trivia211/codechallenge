@@ -14,12 +14,6 @@ require_once ROOT . "/private/snippets.php";
     <div class="container"><div class="row"><div class="col">
         <h1>Linkek</h1>
         <ul class="fs-5">
-            <li><a href="/rudolf">1. Rudolf</a><br>
-                Ha még nem csináltad meg, érdemes ezzel kezdeni!
-                <ul>
-                    <li><a href="https://drive.google.com/file/d/1jFEaJdFGF4JL71LRFyzrEiJ8fpa7beJv/view?usp=drive_link" target="_blank">1.-3. feladat VIDEÓ</a></li>
-                </ul>
-            </li>
             <li><a href="/squidgame">2. Tintahaljáték</a>
                 <ul>
                     <li><a href="https://drive.google.com/file/d/1L2dkipPymiINsot30e4S_BAD3jAabjyU/view?usp=drive_link" target="_blank">1.-2. feladat VIDEÓ</a></li>
@@ -32,7 +26,6 @@ require_once ROOT . "/private/snippets.php";
                     <li><a href="https://drive.google.com/file/d/1v1Iq8ZfW5uT6Q8XJpSWcdJeJRxxd848v/view?usp=sharing" target="_blank">VIDEÓ</a></li>
                 </ul>
             </li>
-            <li><a href="https://aijs.io/editor?user=trivia21&project=Hunt" target="_blank">Gyakorlás: Vadászat</a></li>
         </ul>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
