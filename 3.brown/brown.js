@@ -12,6 +12,7 @@
 
 
 
+
 // * CodeGuppyTools *
 
 const assetsPrefix = "https://prog.vikweb.hu/assets"
@@ -27,7 +28,7 @@ let cgt = {}
     // returns a promise
     _this.loadAssets = function(assets) {
         return new Promise((resolve, reject) => {
-            disablePreloadSystem()
+            usePreloadSystem(false)
             if ( assets.images === undefined )
                 assets.images = []
             if ( assets.sounds === undefined )
@@ -450,6 +451,7 @@ function windowResized() {
 
 let currentBgColor = 'white'
 let oldBackground = background
+let gameStarted = false
 
 ;(async () => {
 
@@ -483,6 +485,7 @@ window.background = function(color) {
 
 await cgt.loadSolution()
 cgt.runSolution()
+gameStarted = true
 
 })()
 
@@ -501,7 +504,7 @@ function random(from, to) {
 
 let drawRecursiveCheck = false
 function draw() {
-    if ( drawRecursiveCheck )
+    if ( !gameStarted || drawRecursiveCheck )
         return
     drawRecursiveCheck = true
     oldBackground(currentBgColor)
@@ -511,7 +514,7 @@ function draw() {
 
 let updateRecursiveCheck = false
 function update() {
-    if ( updateRecursiveCheck )
+    if ( !gameStarted || updateRecursiveCheck )
         return
     updateRecursiveCheck = true
     update()

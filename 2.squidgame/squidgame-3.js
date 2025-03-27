@@ -20,7 +20,7 @@ let cgt = {};
     // returns a promise
     _this.loadAssets = function(assets) {
         return new Promise((resolve, reject) => {
-            disablePreloadSystem()
+            usePreloadSystem(false)
             if ( assets.images === undefined )
                 assets.images = []
             if ( assets.sounds === undefined )

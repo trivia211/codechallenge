@@ -1,7 +1,7 @@
 // * CodeGuppyTools *
 
 const assetsPrefix = "https://prog.vikweb.hu/assets"
-const currentPrefix = assetsPrefix + "/E1.hunt"
+const currentPrefix = assetsPrefix + "/4.hunt"
 
 function sprite(img, x, y, scale) {
     let result = new Sprite(img, x, y)
@@ -30,7 +30,7 @@ let cgt = {}
     // returns a promise
     _this.loadAssets = function(assets) {
         return new Promise((resolve, reject) => {
-            disablePreloadSystem()
+            usePreloadSystem(false)
             if ( assets.images === undefined )
                 assets.images = []
             if ( assets.sounds === undefined )
@@ -67,13 +67,13 @@ let cgt = {}
 
     _this.getImg = function(name) {
         if ( imgs[name] === undefined )
-            throw "Image doesn't exist: " + name
+            throw new Error("Image doesn't exist: " + name)
         return imgs[name]
     }
 
     _this.getSnd = function(name) {
         if ( sounds[name] === undefined )
-            throw "Sound doesn't exist: " + name
+            throw new Error("Sound doesn't exist: " + name)
         return sounds[name]
     }
 
@@ -95,7 +95,18 @@ let cgt = {}
         solutionScriptEl = document.createElement('div')
         document.body.appendChild(solutionScriptEl)
         let fragment = document.createRange()
-            .createContextualFragment(`<script>(async ()=>{${solution}})()</script>`)
+            .createContextualFragment(`<script>
+                (async ()=>{
+                    try {
+                        ${solution}
+                    } catch ( e ) {
+                        if ( typeof e === 'object' && e !== null && typeof e.message === 'string' )
+                            console.error(e.message)
+                        else
+                            console.error(e)
+                    }
+                })()
+            </script>`)
         // exceptions thrown in the solution won't propogate here, they will be uncaught in the other
         // script tag.
         solutionScriptEl.append(fragment)
@@ -454,6 +465,7 @@ function windowResized() {
 // * E1.hunt
 
 let hunt = {}
+let gameStarted = false
 ;(async (_this) => {
 
 const TREECOUNT = 9
@@ -515,9 +527,12 @@ _this.setPlace = function(id, value) {
     places[id] = value
     if ( sPlaces[id] !== null )
         sPlaces[id].remove()
-    const imgName = (value !== 'tree' ? value : staticTrees[id])
-    const x = id % 8 * 100 + 50, y = Math.floor(id / 8) * 100 + 50
-    sPlaces[id] = sprite(cgt.getImg(imgName), x, y, 0.5)
+    if ( value !== null ) {
+        const imgName = (value !== 'tree' ? value : staticTrees[id])
+        const x = id % 8 * 100 + 50, y = Math.floor(id / 8) * 100 + 50
+        sPlaces[id] = sprite(cgt.getImg(imgName), x, y, 0.5)
+    } else
+        sPlaces[id] = null
 }
 
 background('black')
@@ -541,12 +556,14 @@ try {
 
 background('white')
 _this.showNumbers()
-
 cgt.runSolution()
+gameStarted = true
 
 })(hunt)
 
 function draw() {
+    if ( !gameStarted )
+        return
     background('white')
 }
 
