@@ -445,17 +445,32 @@ createCanvas()
 resizeCanvas(800, 600)
 
 let printPos = {x: 0, y: 0}
+let sPrintedTexts = []
 window.print = function(txt) {
+    txt = txt.replace(/\n/g, " ") + (txt.endsWith("\n") ? "\n" : "")
     const printSize = 20
     const lineGap = 1.2
     textSize(printSize)
     let width = textWidth(txt)
-    cgt.sText(txt, printPos.x + width / 2, printPos.y + printSize / 2 * lineGap, printSize)
+    let pt = cgt.sText(txt, printPos.x + width / 2, printPos.y + printSize / 2 * lineGap, printSize)
+    sPrintedTexts.push(pt)
     if  ( txt.endsWith('\n') ) {
         printPos.y += printSize * lineGap
         printPos.x = 0
     } else
         printPos.x += width
+    if ( printPos.y > 600 ) {
+        let diff = printPos.y - 600
+        for ( let i = sPrintedTexts.length - 1; i >= 0; --i ) {
+            const sPT = sPrintedTexts[i]
+            sPT.y -= diff
+            if ( sPT.y + printSize * lineGap < 0 ) {
+                sPT.remove()
+                sPrintedTexts.splice(i, 1)
+            }
+        }
+        printPos.y = 600
+    }
 }
 
 function windowResized() {
@@ -531,6 +546,7 @@ _this.setPlace = function(id, value) {
         const imgName = (value !== 'tree' ? value : staticTrees[id])
         const x = id % 8 * 100 + 50, y = Math.floor(id / 8) * 100 + 50
         sPlaces[id] = sprite(cgt.getImg(imgName), x, y, 0.5)
+        sPlaces[id].layer = 10
     } else
         sPlaces[id] = null
 }
