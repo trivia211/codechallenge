@@ -447,6 +447,7 @@ resizeCanvas(800, 600)
 let printPos = {x: 0, y: 0}
 let sPrintedTexts = []
 window.print = function(txt) {
+    txt = new String(txt)
     txt = txt.replace(/\n/g, " ") + (txt.endsWith("\n") ? "\n" : "")
     const printSize = 20
     const lineGap = 1.2

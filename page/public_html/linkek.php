@@ -26,6 +26,11 @@ require_once ROOT . "/private/snippets.php";
                     <li><a href="https://drive.google.com/file/d/1v1Iq8ZfW5uT6Q8XJpSWcdJeJRxxd848v/view?usp=sharing" target="_blank">VIDEÓ</a></li>
                 </ul>
             </li>
+            <li><a href="/hunt">4. Vadászat</a><br>
+                <ul>
+                    <li><a href="https://drive.google.com/file/d/1ImgvAaMWvAjX6_maYW1cb4hcsxdkQj7q/view?usp=drive_link" target="_blank">VIDEÓ</a></li>
+                </ul>
+            </li>
         </ul>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
