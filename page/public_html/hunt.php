@@ -53,10 +53,10 @@ setPlace(0, "rabbit")
 await sleep(700)
 setPlace(0, null)
 await sleep(700)</pre>
-        <p><b class="fs-5">3. </b>Írj egy programot, ahol a nyuszi végigszalad az összes mezőn. A háttér lehet üres, vagy lehetnek fák is.</p>
+        <p><b class="fs-5">3. </b>Írj egy programot, ahol a nyuszi végigszalad az összes mezőn. A háttér lehet üres, vagy lehetnek fák is. Fontos, hogy ne &ldquor;villogjon&rdquo; a nyuszi, tehát mindig látszódjon valamelyik mezőn!</p>
         <img src="/img/hunt/exc-3.gif" class="img-fluid mb-4 exc-img">
         <?php echo Snippets::solutionForm('hunt', 3); ?>
-        <p><em>Választható feladat koronáért</em>: ha van kedved a kihíváshoz, készíts programot, ahol az egyik irányból a vadász szalad, másik irányból a nyuszi. Középen találkoznak, de elszaladnak egymás mellett. Lehet üres is a háttér. Tipp: egy egyszerű matematikai művelet kell a visszafelé szaladó szereplőhöz!</p>
+        <p><em>Választható feladat koronáért</em>: ha van kedved a kihíváshoz, készíts programot, ahol az egyik irányból a vadász szalad, másik irányból a nyuszi. Középen találkoznak, de elszaladnak egymás mellett. Senki se &ldquor;villogjon&rdquo;! Lehet üres is a háttér. Tipp: egy egyszerű matematikai művelet kell a visszafelé szaladó szereplőhöz!</p>
         <img src="/img/hunt/exc-4.gif" class="img-fluid mb-5 exc-img">
         <?php echo Snippets::solutionForm('hunt', 4); ?>
     </div></div></div>
