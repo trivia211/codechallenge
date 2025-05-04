@@ -70,7 +70,7 @@ function draw() {
                 <strong>Sprite lökdösése: </strong> Hozz létre egy második sprite-ot, és próbáld lökdösni az elsővel.
             </li>
             <li>
-                <strong>moveTowars: </strong> Elég bénán lökdösi. Ennek az az oka, hogy az első sprite nem mozog, hanem ugrál, mindig odaugrik az egérmutatóhoz. A <code>moveTowards()</code> függvénnyel ugrás helyett az egérmutató <em>felé</em> mozgathatod:
+                <strong>moveTowards: </strong> Elég bénán lökdösi. Ennek az az oka, hogy az első sprite nem mozog, hanem ugrál, mindig odaugrik az egérmutatóhoz. A <code>moveTowards()</code> függvénnyel ugrás helyett az egérmutató <em>felé</em> mozgathatod:
                 <pre>s.moveTowards(mouse)</pre>
                 Ha azt szeretnéd, hogy jobban kövesse az egeret, állts be egy 0 és 1 közötti számot a gyorsaságnak:
                 <pre>s.moveTowards(mouse, 0.8)</pre>
