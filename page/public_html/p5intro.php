@@ -56,14 +56,10 @@ require_once ROOT . "/private/snippets.php";
             <li><strong>Mozgó sprite nyomvonalának eltüntetése</strong> Lehet, hogy rossz helyen van a <code>background</code> utasítás?</li>
             <li><strong>Egyéb irányok?</strong> Tudod átlósan, mindenféle irányban mozgatni a sprite-ot?</li>
             <li>
-                <strong>Sprite mozgatása egérhez:</strong> <code>update</code> fügvény minden frame megrajzolása előtt lefut. Ide rakjuk be, hogy a sprite ugorjon az egérhez. Az <code>x</code> koordinátára a megoldás:
-                <pre>function update() {
+                <strong>Sprite mozgatása egérhez:</strong> a <code>draw</code> fügvény minden frame megrajzolása előtt lefut. Ide rakjuk be, hogy a sprite ugorjon az egérhez. Az <code>x</code> koordinátára a megoldás:
+                <pre>function draw() {
     s.x = mouse.x
     // y-ra is csináld meg!
-}
-
-function draw() {
-    s.moveTowards(mouse)
 }</pre>
             </li>
             <li>
@@ -89,6 +85,16 @@ function draw() {
                 <pre>floor.collider = STATIC
 // vagy:
 floor.static = true</pre>
+            </li>
+            <li>
+                <strong>Mozgatás billentyűzetről:</strong> <a href="https://p5play.org/learn/input.html?page=1" target="_blank">Itt</a> meg tudod nézni, hogyan lehet érzékelni, ha megnyomtak egy billentyűt. A játék irányítását az <code>update</code> függvénybe kell írni. <code>kb</code> = keyboard, <code>pressing</code> = lenyomva.
+                <pre>function update() {
+    if ( kb.pressing("left") )
+        fonok.color = "pink"
+}</pre>
+                <p>Hogyan lehetne megcsinálni, hogy jobb gombnál pedig piros színűvé váljon? Nézd meg a <a href="tudastar" target="_blank">Tudástárban</a> az <code>if</code> utasítást!</p>
+                <p>Hogyan lehetne megcsinálni, hogy mozogjon jobbra / balra? Próbáld meg a sebességének a beállításával. Keresd meg ezen az oldalon feljebb, hogyan kell!</p>
+                <p>Mozgasd fel és lefelé is!</p>
             </li>
         </ol>
     </div></div></div>
