@@ -87,7 +87,7 @@ require_once ROOT . "/private/snippets.php";
 floor.static = true</pre>
             </li>
             <li>
-                <strong>Mozgatás billentyűzetről:</strong> <a href="https://p5play.org/learn/input.html?page=1" target="_blank">Itt</a> meg tudod nézni, hogyan lehet érzékelni, ha megnyomtak egy billentyűt. A játék irányítását az <code>update</code> függvénybe kell írni. <code>kb</code> = keyboard, <code>pressing</code> = lenyomva.
+                <strong>Mozgatás billentyűzetről:</strong> <a href="https://p5play.org/learn/input.html?page=1" target="_blank">Itt</a> meg tudod nézni, hogyan lehet érzékelni, ha megnyomtak egy billentyűt. A játék irányítását az <code>update</code> függvénybe kell írni. A szavak jelentése: <code>kb</code> = keyboard, <code>pressing</code> = lenyomva.
                 <pre>function update() {
     if ( kb.pressing("left") )
         fonok.color = "pink"
@@ -97,6 +97,7 @@ floor.static = true</pre>
                 <p>Mozgasd fel és lefelé is!</p>
             </li>
         </ol>
+    <p>Folytatás: <a href="/cannon">Ágyús játék</a>.</p>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
     <script src="/js/challengepage.js"></script>
