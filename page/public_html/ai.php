@@ -15,6 +15,7 @@ require_once ROOT . "/private/snippets.php";
     <div class="container"><div class="row"><div class="col">
         <h1>Programozás AI segéddel</h1>
         <ol>
+            <li>Mi az a Vibe Coding? Értelmezzük ezt a rövid videót: <a href="https://www.youtube.com/shorts/1_rSrkXovOk" target="_blank">https://www.youtube.com/shorts/1_rSrkXovOk</a></li>
             <li>Visual Studio Code (VS-Code) fejlesztői környezet megnyitása.</li>
             <li>Copilot AI programozótárs engedélyezése: Set up Copilot.</li>
             <li>Github fiók regisztrálása, majd összekapcsolása a VS Code-dal.</li>
@@ -56,6 +57,7 @@ require_once ROOT . "/private/snippets.php";
                     <li>Ha belenéztünk a kódba, és találtunk valami érdekeset, amit meg szeretnénk változtatni, hajrá! De a változtatás után el kell menteni a fájlt a Ctrl + S lenyomásával. Ezután a böngészőben frissítsük az oldalt.</li>
                 </ul>
             </li>
+            <li>Generálhatunk képet AI-al is!</li>
             <li>Próbáljuk ki mobilon is a játékunkat. Kérjük meg, hogy tegye irányíthatóvá mobilról is!</li>
         </ol>
     </div></div></div>
