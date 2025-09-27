@@ -29,7 +29,7 @@ require_once ROOT . "/private/snippets.php";
             <li>Bal oldal: kódfájlok, közép: kódszerkesztő, jobb oldal: AI chat.</li>
             <li>A bal oldalon hozzunk létre egy új <code>img</code> nevű mappát, ide fogjuk tenni a képeket.</li>
             <li>Játékötlet kitalálása. Te mit fogsz készíteni?
-                <img src="/img/ai/gameideas.png" class="img-fluid my-2">
+                <img src="/img/ai/gameideas.jpg" class="img-fluid my-2">
             </li>
             <li>Prompt elkészítése a játékhoz. Minél egyszerűbb legyen a kiindulás, és lépésenként adjuk hozzá a funkciókat. Másoljuk be ezt első mondatnak, majd egészítsük ki a saját ötletünkkel:
                 <blockquote class="blockquote">
