@@ -100,6 +100,5 @@ floor.static = true</pre>
     <p>Folytatás: <a href="/cannon">Ágyús játék</a>.</p>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
-    <script src="/js/challengepage.js"></script>
 </body>
 </html>

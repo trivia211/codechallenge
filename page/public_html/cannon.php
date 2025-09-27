@@ -98,6 +98,5 @@ require_once ROOT . "/private/snippets.php";
         </ol>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
-    <script src="/js/challengepage.js"></script>
 </body>
 </html>
