@@ -6,10 +6,10 @@ if ( !defined('ROOT') )
 abstract class Badges {
     // id=>filepath
     const LIST = array(
-        '1'=>"/img/1-star.png",
-        '2'=>"/img/2-star.png",
-        '3'=>"/img/3-star.png",
-        '4'=>"/img/3-star-crown.png"
+        '1'=>"/img/1-star.webp",
+        '2'=>"/img/2-star.webp",
+        '3'=>"/img/3-star.webp",
+        '4'=>"/img/3-star-crown.webp"
     );
 
     // returns common width percent for all badges, so that setting this width and height to auto, all
