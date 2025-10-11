@@ -49,7 +49,7 @@ require_once ROOT . "/private/snippets.php";
 }</pre>
             </li>
             <li>
-                <strong>Sprite mozgatása:</strong> <a href="https://p5play.org/learn/sprite.html?page=3" target="_blank">Ezen a linken</a> láthatod, hogyan mozgatható a sprite. Bejelentkezés: user: <code>idhprog01@freemail.hu</code> pw: <code>Progszakkör1#</code><br>
+                <strong>Sprite mozgatása:</strong> <a href="https://p5play.org/learn/sprite.html?page=3" target="_blank">Ezen a linken</a> láthatod, hogyan mozgatható a sprite. Bejelentkezés (Teacher or Developer account): user: <code>idhprog01@freemail.hu</code> pw: <code>Progszakkör1#</code><br>
                 Újra legyen 1 db spriteunk! Beállítható a <code>velocity</code>, vagy rövidebben <code>vel</code> tulajdonsága. A <code>velocity</code> egy objektum, aminek <code>x</code> és <code>y</code> tulajdonságai vannak.
                 <pre>s.vel.x = 2</pre>
             </li>
