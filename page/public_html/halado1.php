@@ -53,7 +53,10 @@ function draw() {
             <li>A pac-man figura kövesse az egeret.</li>
             <li>Amíg le van nyomva az egérgomb, a pac-man figura legyen nagyobb.</li>
         </ol>
+        <p>Ha az összes feladat elkészült, a teljes kódot küld be itt:</p>
+        <?php echo Snippets::solutionForm('halado1', 1); ?>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
+    <script src="/js/challengepage.js"></script>
 </body>
 </html>
