@@ -9,3 +9,8 @@ INSERT INTO challengeExercises (challengeId, no) VALUES (4, 1), (4, 2), (4, 3), 
 -- * sqlchange3 *
 INSERT INTO challenges values(5, 'halado1', "Haladó I.");
 INSERT INTO challengeExercises (challengeId, no) VALUES (5, 1);
+
+-- * sqlchange4 *
+INSERT INTO challengeExercises (challengeId, no) VALUES (5, 2);
+INSERT INTO challengeExercises (challengeId, no) VALUES (5, 3);
+INSERT INTO challengeExercises (challengeId, no) VALUES (5, 4);

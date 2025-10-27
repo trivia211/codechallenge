@@ -3,6 +3,8 @@ if ( !defined('ROOT') )
    define('ROOT', __DIR__ . "");
 require_once ROOT . "/private/config.php";
 require_once ROOT . "/private/snippets.php";
+
+checkAuth();
 ?>
 <!doctype html>
 <html lang="hu">
@@ -15,10 +17,13 @@ require_once ROOT . "/private/snippets.php";
         <h1>Haladó I.</h1>
         <p>Szia Sanyi és Domi! Elkészült az első haladó otthoni feladat!</p>
         <video controls class="img-fluid">
-            <source src="/media/halado1.mp4" type="video/mp4">
+            <source src="/media/halado1-ypURuMfNfQipzpL9lt9D.mp4" type="video/mp4">
             A böngésződ nem tudja lejátszani ezt a videót.
         </video>
-        <p>P5play leírás belépési adatok: user: <code>idhprog01@freemail.hu</code> pw: <code>Progszakkör1#</code></p>
+        <ul>
+            <li><a href="/assets/p5play-project.7z">Q5.js és P5play kiindulási projekt</a></li>
+            <li>P5play leírás belépési adatok: user: <code>idhprog01@freemail.hu</code> pw: <code>Progszakkör1#</code></li>
+        </ul>
         <p>Ebből a kódból tudtok kiindulni:</p>
         <pre class="bg-primary-subtle">createCanvas()
 resizeCanvas(800, 600)
@@ -55,6 +60,43 @@ function draw() {
         </ol>
         <p>Ha az összes feladat elkészült, a teljes kódot küldd be itt:</p>
         <?php echo Snippets::solutionForm('halado1', 1); ?>
+        <h2>Folytatás</h2>
+        <video controls class="img-fluid">
+            <source src="/media/halado1-2-ypURuMfNfQipzpL9lt9D.mp4" type="video/mp4">
+            A böngésződ nem tudja lejátszani ezt a videót.
+        </video>
+        <p>Kiindulási kód:</p>
+        <pre class="bg-primary-subtle">createCanvas()
+resizeCanvas(800, 600)
+
+function update() {
+}
+
+function draw() {
+    background('LightSkyBlue')
+
+    textSize(32)
+    fill('black')
+    text("Mi a titkom?", 100, 100)
+
+    fill('yellow')
+    circle(400, 300, 150) // Face
+    circle(370, 280, 10) // Left eye
+    circle(430, 280, 10) // Right eye
+    arc(400, 310, 80, 80, 0, 180) // Smile
+
+    fill('Navy')
+    square(650, 450, 100)
+    fill('Maroon')
+    circle(700, 500, 100)
+
+}</pre>
+        <p>Feladatok:</p>
+        <ol>
+            <li>Ha lenyomom az egérgombot a &quot;Mi a titkom?&quot; szöveg helyett írjon ki valami nagyon titkosat 😊.</li>
+            <li>A mosolygós arc csak akkor jelenjen meg, ha az egér a vászon felső felében van. Ha leviszem, tűnjön el!</li>
+            <li>A négyzet és a kör közül csak az egyik jelenjen meg! Amikor nem nyomok meg semmit, a kör, amikor lenyomom az egér <strong>jobb</strong> gombját, a négyzet. Használd ezek közül valamelyiket: <code>presses(&apos;right&apos;)</code> vagy <code>pressing(&apos;right&apos;)</code> vagy <code>released(&apos;right&apos;)</code>.</li>
+        </ol>
     </div></div></div>
     <?php echo Snippets::foot(); ?>
     <script src="/js/challengepage.js"></script>
