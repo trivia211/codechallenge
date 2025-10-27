@@ -95,7 +95,7 @@ function draw() {
         <ol>
             <li>Ha lenyomom az egérgombot a &quot;Mi a titkom?&quot; szöveg helyett írjon ki valami nagyon titkosat 😊.</li>
             <li>A mosolygós arc csak akkor jelenjen meg, ha az egér a vászon felső felében van. Ha leviszem, tűnjön el!</li>
-            <li>A négyzet és a kör közül csak az egyik jelenjen meg! Amikor nem nyomok meg semmit, a kör, amikor lenyomom az egér <strong>jobb</strong> gombját, a négyzet. Használd ezek közül valamelyiket: <code>presses(&apos;right&apos;)</code> vagy <code>pressing(&apos;right&apos;)</code> vagy <code>released(&apos;right&apos;)</code>.</li>
+            <li>A négyzet és a kör közül csak az egyik jelenjen meg! Amikor nem nyomok meg semmit, a kör, amikor lenyomom az egér <strong>jobb</strong> gombját, a négyzet. Használd ezek közül valamelyiket: <code>mouse.presses(&apos;right&apos;)</code> vagy <code>mouse.pressing(&apos;right&apos;)</code> vagy <code>mouse.released(&apos;right&apos;)</code>.</li>
         </ol>
         <?php echo Snippets::solutionForm('halado1', 2); ?>
     </div></div></div>
